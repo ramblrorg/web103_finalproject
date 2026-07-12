@@ -3,18 +3,16 @@
 Reference the Creating an Entity Relationship Diagram final project guide in the course portal for more information about how to complete this deliverable.
 
 ## Create the List of Tables
--[] Users
--[] Trips
--[] Destinations
--[] Activities
--[] Expenses
--[] Packing List
-
+- Users
+- Trips
+- Destinations
+- Activities
+- Expenses
+- Packing List
 
 ## Add the Entity Relationship Diagram
 
-[👉🏾👉🏾👉🏾 Include an image or images of the diagram below. You may also wish to use the following markdown syntax to outline each table, as per your preference.]
-
+<img src='/planning/img/Ramblr ERD.png' title='ERD' width='' alt='entity relationship diagram image' />
 
 ### Users
 | Column Name   | Type       | Description                                                   |
