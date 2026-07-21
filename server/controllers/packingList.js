@@ -1,4 +1,4 @@
-import pool from "../config/db.js";
+import { pool } from "../config/database.js";
 
 // TODO: placeholder query, adjust columns/table once the packing list schema is finalized
 const getAllPackingListItems = async (req, res) => {

@@ -1,4 +1,4 @@
-import pool from "../config/db.js";
+import { pool } from "../config/database.js";
 
 // TODO: placeholder query, adjust columns/table once the trips schema is finalized
 const getAllTrips = async (req, res) => {

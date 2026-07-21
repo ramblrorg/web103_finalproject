@@ -5,6 +5,7 @@ import tripsRouter from "./routes/trips.js";
 import activitiesRouter from "./routes/activities.js";
 import expensesRouter from "./routes/expenses.js";
 import packingListRouter from "./routes/packingList.js";
+import usersRouter from "./routes/users.js";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use("/api/trips", tripsRouter);
 app.use("/api/activities", activitiesRouter);
 app.use("/api/expenses", expensesRouter);
 app.use("/api/packing-list", packingListRouter);
+app.use("/api/users", usersRouter);
 
 if (process.env.NODE_ENV === "production") {
   app.get("/*", (_, res) => res.sendFile(path.resolve("public", "index.html")));

@@ -1,4 +1,4 @@
-import pool from "../config/db.js";
+import { pool } from "../config/database.js";
 
 // TODO: placeholder query, adjust columns/table once the expenses schema is finalized
 const getAllExpenses = async (req, res) => {

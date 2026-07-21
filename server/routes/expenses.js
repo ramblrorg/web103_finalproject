@@ -5,7 +5,7 @@ import {
   createExpense,
   updateExpense,
   deleteExpense,
-} from "../controllers/expensesController.js";
+} from "../controllers/expenses.js";
 
 const router = Router();
 

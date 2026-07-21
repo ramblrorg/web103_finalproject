@@ -5,7 +5,7 @@ import {
   createPackingListItem,
   updatePackingListItem,
   deletePackingListItem,
-} from "../controllers/packingListController.js";
+} from "../controllers/packingList.js";
 
 const router = Router();
 

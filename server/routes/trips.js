@@ -5,7 +5,7 @@ import {
   createTrip,
   updateTrip,
   deleteTrip,
-} from "../controllers/tripsController.js";
+} from "../controllers/trips.js";
 
 const router = Router();
 
