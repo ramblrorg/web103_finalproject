@@ -12,8 +12,9 @@ import { users } from "../data/users.js";
 // Down: DROP TABLE IF EXISTS users CASCADE;
 // Up: CREATE TABLE users (...) below.
 
-// CASCADE also drops trips (and any future table referencing users), since
-// this DROP always runs first and trips.user_id depends on users.id.
+// CASCADE also drops trips and destinations (and any future table referencing
+// users), since this DROP always runs first and trips.user_id depends on
+// users.id, with destinations depending on trips in turn.
 const createUsersTableQuery = `
   DROP TABLE IF EXISTS users CASCADE;
 
@@ -50,17 +51,20 @@ const seedUsers = async () => {
   }
 };
 
-// Down: DROP TABLE IF EXISTS trips;
+// Down: DROP TABLE IF EXISTS trips CASCADE;
 // Up: CREATE TABLE trips (...) below.
 
 // New Concept: CASCADE: In our case, it mostly relates to FK. Can think of it as automatic cleanup of child records when a parent record is deleted.
 // In this case, if a trip is deleted, all its child records (destinations, packing_list, etc.) should also be deleted. This is done by adding ON DELETE CASCADE to the FK constraint in the child table.
 
-// Future child tables (destinations, packing_list, etc.) should put
+// CASCADE here also drops destinations (and any future table referencing
+// trips), so this reset always succeeds regardless of what state the shared
+// dev database is in.
+// Future child tables (activities, packing_list, etc.) should put
 // ON DELETE CASCADE on their own trip_id/destination_id FK instead of here,
 // so a trip delete cascades all the way down.
 const createTripsTableQuery = `
-  DROP TABLE IF EXISTS trips;
+  DROP TABLE IF EXISTS trips CASCADE;
 
   CREATE TABLE trips (
     id SERIAL PRIMARY KEY,
@@ -82,10 +86,40 @@ const createTripsTable = async () => {
   }
 };
 
+// Down: DROP TABLE IF EXISTS destinations;
+// Up: CREATE TABLE destinations (...) below.
+
+// Future child tables (activities) should put ON DELETE CASCADE on their own
+// destination_id FK instead of here, so a destination delete cascades too.
+const createDestinationsTableQuery = `
+  DROP TABLE IF EXISTS destinations;
+
+  CREATE TABLE destinations (
+    id SERIAL PRIMARY KEY,
+    trip_id INTEGER NOT NULL REFERENCES trips(id) ON DELETE CASCADE,
+    city VARCHAR NOT NULL,
+    country VARCHAR NOT NULL,
+    currency_code VARCHAR(3),
+    arrival_order INTEGER,
+    start_date DATE,
+    end_date DATE
+  );
+`;
+
+const createDestinationsTable = async () => {
+  try {
+    await pool.query(createDestinationsTableQuery);
+    console.log("✅ destinations table created successfully");
+  } catch (error) {
+    console.error("⚠️ Error creating destinations table:", error);
+  }
+};
+
 const seedDBs = async () => {
   try {
     await seedUsers();
     await createTripsTable();
+    await createDestinationsTable();
     console.log("Database seeding complete.");
   } catch (err) {
     console.error("Database seeding failed:", err);

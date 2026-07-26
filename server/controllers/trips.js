@@ -1,6 +1,7 @@
 import { pool } from "../config/database.js";
 import { getCurrentUserId } from "../helpers/currentUser.js";
 import { isValidId, isValidDate, isValidBudget } from "../helpers/validation.js";
+import { isDateBefore } from "../helpers/dates.js";
 
 // GET /api/trips — list the current user's trips.
 const getAllTrips = async (req, res) => {
@@ -100,13 +101,14 @@ const updateTrip = async (req, res) => {
     if (!existingTrip.rows.length)
       return res.status(404).json({ error: "Trip not found" });
 
-    // validate against the merged start/end date, not just whatever this request happens to include
+    // a PATCH can send either date, both, or neither; for whichever one isn't
+    // sent, fall back to the trip's existing value, then validate that pair
     const mergedStartDate = startDate ?? existingTrip.rows[0].start_date;
     const mergedEndDate = endDate ?? existingTrip.rows[0].end_date;
     if (
       mergedStartDate &&
       mergedEndDate &&
-      new Date(mergedEndDate) < new Date(mergedStartDate)
+      isDateBefore(mergedEndDate, mergedStartDate)
     ) {
       return res
         .status(400)
