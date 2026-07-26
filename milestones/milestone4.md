@@ -15,11 +15,11 @@ This unit, be sure to complete all tasks listed below. To complete a task, place
 
 ### 1. What went well during this unit?
 
-[👉🏾👉🏾👉🏾 your answer here]
+During this unit, the team collaboration and Git workflow process went well. We were efficiently using commits, branches, and pull requests to combine everyone's contributions and organize our work. Each of us were able to work on our features without messing with one anothers code, while the pull requests allowed us to review change and provide feedback. This helped prevent merge conflicts and made the development process much more structured and clear. Overall, utilizing git allowed out team to efficiently communicate and made it easier to collaborate on different parts of the application.
 
 ### 2. What were some challenges your group faced in this unit?
 
-[👉🏾👉🏾👉🏾 your answer here]
+There were some instances in which our render dashboard was not connected properly, causing issues with testing the application. We had to troubleshoot configuration settings in order to verify our back-end and front-end were working as expected. However, by communication with one another using slack and reviewing changes made carefully, we were able to resolve these issues while keeping the project moving. 
 
 ### Did you finish all of your tasks in your sprint plan for this week? If you did not finish all of the planned tasks, how would you prioritize the remaining tasks on your list?
 
