@@ -9,7 +9,6 @@ import {
 
 const router = Router();
 
-router.get("/", getAllPackingListItems); 
 router.get("/:id", getPackingListItemById);
 router.patch("/:id", updatePackingListItem);
 router.delete("/:id", deletePackingListItem);
