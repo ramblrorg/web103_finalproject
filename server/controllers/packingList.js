@@ -7,21 +7,19 @@ import { getOwnedTrip } from "../helpers/tripOwnership.js";
 const DEFAULT_PACKING_ITEMS = [
   "Passport",
   "Phone charger",
-  "Toiletries",
   "Medications",
   "Travel adapter",
   "Toothbrush & toothpaste",
   "Deodorant",
-  "Sunglasses",
   "Reusable water bottle",
 ];
 
 const getOwnedPackingList = async (packingListId, userId) => {
   const { rows } = await pool.query(
-    `SELECT packing_items.*
-     FROM packing_items
-     JOIN trips ON packing_items.trip_id = trips.id
-     WHERE packing_items.id = $1 AND trips.user_id = $2`,
+    `SELECT packing_list.*
+     FROM packing_list
+     JOIN trips ON packing_list.trip_id = trips.id
+     WHERE packing_list.id = $1 AND trips.user_id = $2`,
     [packingListId, userId],
   );
   return rows[0] ?? null;
@@ -40,7 +38,7 @@ const getAllPackingListItems = async (req, res) => {
     if (!trip) return res.status(404).json({ error: "Trip not found" });
     
     const { rows } = await pool.query(
-      `SELECT * FROM packing_items 
+      `SELECT * FROM packing_list 
       WHERE trip_id = $1`,
       [tripId]
     );
@@ -80,7 +78,7 @@ const generatePackingItems = async (req, res) => {
     
     for (const item of DEFAULT_PACKING_ITEMS) {
       await pool.query(
-        `INSERT INTO packing_items
+        `INSERT INTO packing_list
           (trip_id, name, is_packed, is_auto_generated)
          VALUES ($1, $2, $3, $4)`,
         [tripId, item, false, true]
@@ -107,7 +105,7 @@ const createPackingListItem = async (req, res) => {
     if (!trip) return res.status(404).json({ error: "Trip not found" });
     
     const { rows } = await pool.query(
-      `INSERT INTO packing_items (trip_id, name, is_packed, is_auto_generated) 
+      `INSERT INTO packing_list (trip_id, name, is_packed, is_auto_generated) 
       VALUES ($1, $2, $3, $4) 
       RETURNING *`,
       [tripId, name.trim(), false, false]
@@ -132,7 +130,7 @@ const updatePackingListItem = async (req, res) => {
     if (!packingList) return res.status(404).json({ error: "Packing list item not found" });
 
     const {rows} = await pool.query (
-      `UPDATE packing_items 
+      `UPDATE packing_list 
         SET name = COALESCE($1, name), 
         is_packed = COALESCE($2, is_packed)
       WHERE id = $3
@@ -159,7 +157,7 @@ const deletePackingListItem = async (req, res) => {
     const packingList = await getOwnedPackingList(id, userId);
     if (!packingList) return res.status(404).json({ error: "Packing list item not found" });
 
-    const {rows} = await pool.query ( `DELETE FROM packing_items WHERE id = $1`, [id] );
+    const {rows} = await pool.query ( `DELETE FROM packing_list WHERE id = $1`, [id] );
     
     res.status(204).send(); 
   } catch (err) {
