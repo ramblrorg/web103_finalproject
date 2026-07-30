@@ -7,7 +7,8 @@ import { getOwnedTrip } from "../helpers/tripOwnership.js";
 const DEFAULT_PACKING_ITEMS = [
   "Passport",
   "Phone charger",
-  "Medications",
+  "First aid kit",
+  "Headphones",
   "Travel adapter",
   "Toothbrush & toothpaste",
   "Deodorant",
@@ -150,7 +151,7 @@ const deletePackingListItem = async (req, res) => {
   const { id } = req.params;
   if (!isValidId(id)) return res.status(400).json({ error: "Invalid packing list item id" });
 
-  try{
+  try {
     const userId = await getCurrentUserId();
     if (!userId) return res.status(404).json({ error: "User not found" });
 
