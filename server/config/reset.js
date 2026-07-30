@@ -115,10 +115,31 @@ const createDestinationsTable = async () => {
   }
 };
 
+const createPackingListTableQuery = `
+  DROP TABLE IF EXISTS packing_list;
+  CREATE TABLE packing_list (
+    id SERIAL PRIMARY KEY,
+    trip_id INTEGER NOT NULL REFERENCES trips(id) ON DELETE CASCADE,
+    name VARCHAR NOT NULL,
+    is_packed BOOLEAN NOT NULL DEFAULT FALSE,
+    is_auto_generated BOOLEAN NOT NULL DEFAULT FALSE
+  );
+`;
+
+const createPackingListTable = async () => {
+  try {
+    await pool.query(createPackingListTableQuery);
+    console.log("✅ packing_list table created successfully");
+  } catch (error) {
+    console.error("⚠️ Error creating packing_list table:", error);
+  }
+};
+
 const seedDBs = async () => {
   try {
     await seedUsers();
     await createTripsTable();
+    await createPackingListTable();
     await createDestinationsTable();
     console.log("Database seeding complete.");
   } catch (err) {
