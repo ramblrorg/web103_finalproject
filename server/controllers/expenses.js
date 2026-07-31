@@ -15,8 +15,32 @@ const getOwnedExpenses = async (expenseId, userId) => {
   return rows[0] ?? null;
 };
 
-// GET /api/trips/:tripId/expenses/summary - returns total expenses, and remaining budget for trip
+// GET /api/trips/:tripId/expenses — list all expenses for a trip
 const getAllExpenses = async (req, res) => {
+  const { tripId } = req.params;
+  if (!isValidId(tripId)) return res.status(400).json({ error: "Invalid trip id" });
+
+  try {
+    const userId = await getCurrentUserId();
+    if (!userId) return res.status(404).json({ error: "User not found" });
+
+    const trip = await getOwnedTrip(tripId, userId);
+    if (!trip) return res.status(404).json({ error: "Trip not found" });
+
+    const { rows } = await pool.query(
+      `SELECT * FROM expenses WHERE trip_id = $1
+       ORDER BY spent_at ASC NULLS LAST`, 
+      [tripId]);
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+
+// GET /api/trips/:tripId/expenses/summary - returns total expenses, and remaining budget for trip
+const getExpensesSummary = async (req, res) => {
   const { tripId } = req.params;
   if (!isValidId(tripId)) return res.status(400).json({ error: "Invalid trip id" });
 
@@ -30,10 +54,11 @@ const getAllExpenses = async (req, res) => {
     const { rows } = await pool.query(
       `SELECT 
       SUM(amount_usd) AS total_expenses,
-      (t.budget_usd - SUM(amount_usd)) AS remaining_budget
+      (t.budget - SUM(amount_usd)) AS remaining_budget
       FROM trips t
-      LEFT JOIN expenses e ON t.id = e.trip_id
-      GROUP BY t.id, t.budget_usd
+      LEFT JOIN expenses e ON t.id = e.trip_id AND e.status = 'actual'
+      WHERE t.id = $1
+      GROUP BY t.id, t.budget
       HAVING t.id = $1`,
       [tripId]);
     res.json(rows);
@@ -79,10 +104,10 @@ const createExpense = async (req, res) => {
 
     const { rows } = await pool.query(
       `INSERT INTO expenses 
-      (trip_id, amount_usd, category, status, description, spent_at)
-       VALUES ($1, $2, $3, $4, $5, $6)
+      (trip_id, amount_usd, category, status, description)
+       VALUES ($1, $2, $3, COALESCE($4, 'actual'), $5)
        RETURNING *`,
-      [tripId, amount_usd, category, status, description, spent_at],
+      [tripId, amount_usd, category, status, description],
     );
     res.status(201).json(rows[0]);
   } catch (err) {
@@ -150,4 +175,4 @@ const deleteExpense = async (req, res) => {
   //try catch statement where we will delete item in table
 };
 
-export { getAllExpenses, getExpenseById, createExpense, updateExpense, deleteExpense };
+export { getAllExpenses,getExpensesSummary, getExpenseById, createExpense, updateExpense, deleteExpense };

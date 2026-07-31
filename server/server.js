@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import tripsRouter from "./routes/trips.js";
 import activitiesRouter from "./routes/activities.js";
 import expensesRouter from "./routes/expenses.js";
+import expensesForTripRouter from "./routes/expensesForTrip.js";
 import packingListRouter from "./routes/packingList.js";
 import packingListForTripRouter from "./routes/packingListForTrip.js";
 import usersRouter from "./routes/users.js";
@@ -25,6 +26,7 @@ if (process.env.NODE_ENV === "production") {
 app.use("/api/trips", tripsRouter);
 app.use("/api/activities", activitiesRouter);
 app.use("/api/expenses", expensesRouter);
+app.use("/api/trips/:tripId/expenses", expensesForTripRouter);
 app.use("/api/packing-list", packingListRouter);
 app.use("/api/trips/:tripId/packing-list", packingListForTripRouter);
 app.use("/api/users", usersRouter);

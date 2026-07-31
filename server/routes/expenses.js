@@ -9,10 +9,10 @@ import {
 
 const router = Router();
 
-router.get("/", getAllExpenses);
+// router.get("/", getAllExpenses);
 router.get("/:id", getExpenseById);
-router.post("/", createExpense);
-router.put("/:id", updateExpense);
+// router.post("/", createExpense);
+router.patch("/:id", updateExpense);
 router.delete("/:id", deleteExpense);
 
 export default router;
