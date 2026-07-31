@@ -2,18 +2,7 @@ import { pool } from "../config/database.js";
 import { isValidId } from "../helpers/validation.js";
 import { getCurrentUserId } from "../helpers/currentUser.js";
 import { getOwnedTrip } from "../helpers/tripOwnership.js";
-
-//helper function to check if the user owns the trip before allowing them to create, update, or delete an expense
-const getOwnedExpenses = async (expenseId, userId) => {
-  const { rows } = await pool.query (
-    `SELECT expenses.*
-     FROM expenses
-     JOIN trips ON expenses.trip_id = trips.id
-     WHERE expenses.id = $1 AND trips.user_id = $2`,
-    [expenseId, userId],
-  );
-  return rows[0] ?? null;
-};
+import { getOwnedExpenses } from "../helpers/expensesOwnership.js";
 
 // GET /api/trips/:tripId/expenses — list all expenses for a trip
 const getAllExpenses = async (req, res) => {
@@ -95,6 +84,7 @@ const createExpense = async (req, res) => {
   if (!amount_usd) return res.status(400).json({ error: "Amount in USD is required" });
   if (!category) return res.status(400).json({ error: "Category is required" });
   
+  
   try {
     const userId = await getCurrentUserId();
     if (!userId) return res.status(404).json({ error: "User not found" });
@@ -102,20 +92,30 @@ const createExpense = async (req, res) => {
     const trip = await getOwnedTrip(tripId, userId);
     if (!trip) return res.status(404).json({ error: "Trip not found" });
 
-    const { rows } = await pool.query(
-      `INSERT INTO expenses 
-      (trip_id, amount_usd, category, status, description)
-       VALUES ($1, $2, $3, COALESCE($4, 'actual'), $5)
-       RETURNING *`,
-      [tripId, amount_usd, category, status, description],
-    );
+    //if status is provided, include it in the insert query; otherwise, use the default value
+    let rows;
+
+    if (status) {
+      ({ rows } = await pool.query(
+        `INSERT INTO expenses
+        (trip_id, amount_usd, category, status, description)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING *`,
+        [tripId, amount_usd, category, status, description]
+      ));
+    } else {
+      ({ rows } = await pool.query(
+        `INSERT INTO expenses
+        (trip_id, amount_usd, category, description)
+        VALUES ($1, $2, $3, $4)
+        RETURNING *`,
+        [tripId, amount_usd, category, description]
+      ));
+    }
     res.status(201).json(rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-  //get tripid and userid from req.body, validate they exist in the database, get characteristics of expense from req.body
-  //then insert into expenses table with characteristics of with characteristics of amount_usd (nn), category (lodging, travel, activity, food), status (actual/estimated), description, and spent_at
-  //try catch statement where we will insert item into table with all characteristics
 };
 
 // PATCH /api/expenses/:id
@@ -123,9 +123,10 @@ const updateExpense = async (req, res) => {
   const { id } = req.params;
   const { amount_usd, category, status, description, spent_at } = req.body;
 
+  if (!isValidId(id)) return res.status(400).json({ error: "Invalid expense id" });
   if (!amount_usd) return res.status(400).json({ error: "Amount in USD is required" });
   if (!category) return res.status(400).json({ error: "Category is required" });
-  
+  if (!status) return res.status(400).json({ error: "Status is required" });
   try {
     const userId = await getCurrentUserId();
     if (!userId) return res.status(404).json({ error: "User not found" });
@@ -148,9 +149,6 @@ const updateExpense = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-  //get tripid and userid from req.body, validate they exist in the database, get characteristics of expense from req.body
-  //then update expenses table with characteristics of amount_usd (nn), category (lodging, travel, activity, food), status (actual/estimated), description, and spent_at
-  //try catch statement where we will update item in table with all characteristics
 };
 
 // DELETE /api/expenses/:id
@@ -170,9 +168,6 @@ const deleteExpense = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-  //get tripid and userid from req.body, validate they exist in the database, get expense from req.body
-  //then delete expense from expenses table
-  //try catch statement where we will delete item in table
 };
 
 export { getAllExpenses,getExpensesSummary, getExpenseById, createExpense, updateExpense, deleteExpense };
