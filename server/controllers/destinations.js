@@ -1,21 +1,10 @@
 import { pool } from "../config/database.js";
 import { getCurrentUserId } from "../helpers/currentUser.js";
 import { getOwnedTrip } from "../helpers/tripOwnership.js";
+import { getOwnedDestination } from "../helpers/destinationOwnership.js";
 import { getCurrencyForCountry } from "../helpers/currency.js";
 import { isValidId, isValidDate } from "../helpers/validation.js";
 import { isDateBefore, isDateAfter } from "../helpers/dates.js";
-
-// Destinations have no user_id of their own; ownership is checked via the parent trip through this join.
-const getOwnedDestination = async (destinationId, userId) => {
-  const { rows } = await pool.query(
-    `SELECT destinations.*
-     FROM destinations
-     JOIN trips ON destinations.trip_id = trips.id
-     WHERE destinations.id = $1 AND trips.user_id = $2`,
-    [destinationId, userId],
-  );
-  return rows[0] ?? null;
-};
 
 // GET /api/trips/:tripId/destinations — list a trip's destinations, ordered for a multi-stop itinerary.
 const getDestinationsForTrip = async (req, res) => {

@@ -86,13 +86,16 @@ const createTripsTable = async () => {
   }
 };
 
-// Down: DROP TABLE IF EXISTS destinations;
+// Down: DROP TABLE IF EXISTS destinations CASCADE;
 // Up: CREATE TABLE destinations (...) below.
 
+// CASCADE here also drops activities (and any future table referencing
+// destinations), same reasoning as trips' own CASCADE drop above: keeps
+// reset.js resilient regardless of what state the shared dev database is in.
 // Future child tables (activities) should put ON DELETE CASCADE on their own
 // destination_id FK instead of here, so a destination delete cascades too.
 const createDestinationsTableQuery = `
-  DROP TABLE IF EXISTS destinations;
+  DROP TABLE IF EXISTS destinations CASCADE;
 
   CREATE TABLE destinations (
     id SERIAL PRIMARY KEY,
@@ -135,12 +138,38 @@ const createPackingListTable = async () => {
   }
 };
 
+// Down: DROP TABLE IF EXISTS activities;
+// Up: CREATE TABLE activities (...) below.
+const createActivitiesTableQuery = `
+  DROP TABLE IF EXISTS activities;
+
+  CREATE TABLE activities (
+    id SERIAL PRIMARY KEY,
+    destination_id INTEGER NOT NULL REFERENCES destinations(id) ON DELETE CASCADE,
+    name VARCHAR NOT NULL,
+    scheduled_date DATE,
+    start_time TIME,
+    duration_minutes INTEGER,
+    notes TEXT
+  );
+`;
+
+const createActivitiesTable = async () => {
+  try {
+    await pool.query(createActivitiesTableQuery);
+    console.log("✅ activities table created successfully");
+  } catch (error) {
+    console.error("⚠️ Error creating activities table:", error);
+  }
+};
+
 const seedDBs = async () => {
   try {
     await seedUsers();
     await createTripsTable();
     await createPackingListTable();
     await createDestinationsTable();
+    await createActivitiesTable();
     console.log("Database seeding complete.");
   } catch (err) {
     console.error("Database seeding failed:", err);
