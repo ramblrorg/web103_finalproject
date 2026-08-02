@@ -36,11 +36,11 @@ export const fetchTripById = async (id) => {
 };
 
 // POST /api/trips
-export const createTrip = async ({ title, startDate, endDate, budget }) => {
+export const createTrip = async ({ title, startDate, endDate, budget, imageUrl }) => {
   const res = await fetch(BASE_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title, startDate, endDate, budget }),
+    body: JSON.stringify({ title, startDate, endDate, budget, imageUrl }),
   });
   const body = await parseJsonSafe(res);
 
@@ -52,11 +52,11 @@ export const createTrip = async ({ title, startDate, endDate, budget }) => {
 };
 
 // PATCH /api/trips/:id
-export const updateTrip = async (id, { title, startDate, endDate, budget }) => {
+export const updateTrip = async (id, { title, startDate, endDate, budget, imageUrl }) => {
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title, startDate, endDate, budget }),
+    body: JSON.stringify({ title, startDate, endDate, budget, imageUrl }),
   });
   const body = await parseJsonSafe(res);
 
@@ -67,9 +67,7 @@ export const updateTrip = async (id, { title, startDate, endDate, budget }) => {
   return body;
 };
 
-// DELETE /api/trips/:id — server responds 204 No Content on success, so
-// there's no body to parse there (parseJsonSafe would just swallow the
-// empty-body JSON error, but we still guard on res.ok either way).
+
 export const deleteTrip = async (id) => {
   const res = await fetch(`${BASE_URL}/${id}`, { method: "DELETE" });
 

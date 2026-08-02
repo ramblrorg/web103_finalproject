@@ -65,5 +65,10 @@ export const validateTripForm = (form) => {
     errors.budget = "Budget must be zero or greater.";
   }
 
+  // Optional field -- only validated if the user actually typed something.
+  if (form.imageUrl && form.imageUrl.trim() && !/^https?:\/\/\S+\.\S+/i.test(form.imageUrl.trim())) {
+    errors.imageUrl = "Enter a valid image URL (starting with http:// or https://).";
+  }
+
   return errors;
 };

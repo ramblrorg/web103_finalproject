@@ -3,7 +3,37 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar.jsx";
 import { fetchTrips, deleteTrip } from "../services/trips.js";
 import { formatDateRange, formatBudget, getStatusLabel } from "../helpers/tripFormat.js";
+import placeholderImg from "../assets/trip-placeholder.svg";
 import "../css/Trips.css";
+
+// Quick-pick budget ranges shown as chips above the grid. "Custom" reveals
+// the min/max inputs for anything these presets don't cover.
+const BUDGET_PRESETS = [
+  { label: "Any budget", min: "", max: "" },
+  { label: "Under $1,000", min: "", max: "1000" },
+  { label: "$1,000–$3,000", min: "1000", max: "3000" },
+  { label: "$3,000+", min: "3000", max: "" },
+];
+
+// Renders trip.image_url when set, falling back to the single shared
+// placeholder image when it's null OR the URL 404s/fails to load -- tracked
+// locally so one broken image doesn't affect other cards.
+const TripCover = ({ trip, children }) => {
+  const [imageFailed, setImageFailed] = useState(false);
+  const src = trip.image_url && !imageFailed ? trip.image_url : placeholderImg;
+
+  return (
+    <div className="trip-card__cover">
+      <img
+        className="trip-card__cover-img"
+        src={src}
+        alt=""
+        onError={() => setImageFailed(true)}
+      />
+      {children}
+    </div>
+  );
+};
 
 const Trips = () => {
   const navigate = useNavigate();
@@ -12,10 +42,10 @@ const Trips = () => {
   const [loadStatus, setLoadStatus] = useState("loading"); // loading | ready | error
   const [loadError, setLoadError] = useState("");
 
-  // Budget filter -- applied client-side since T2's list endpoint doesn't
-  // take query params. Kept as raw strings so the inputs can be empty.
+  //Budget Filter
   const [minBudget, setMinBudget] = useState("");
   const [maxBudget, setMaxBudget] = useState("");
+  const [showCustomRange, setShowCustomRange] = useState(false);
 
   // Delete confirmation.
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -68,9 +98,18 @@ const Trips = () => {
   }, [trips, minBudget, maxBudget]);
 
   const hasActiveFilter = minBudget !== "" || maxBudget !== "";
+  const activePreset = BUDGET_PRESETS.find((p) => p.min === minBudget && p.max === maxBudget);
+
+  const applyPreset = (preset) => {
+    setMinBudget(preset.min);
+    setMaxBudget(preset.max);
+    setShowCustomRange(false);
+  };
+
   const clearFilter = () => {
     setMinBudget("");
     setMaxBudget("");
+    setShowCustomRange(false);
   };
 
   const goToCreateTrip = () => navigate("/trips/new");
@@ -99,7 +138,7 @@ const Trips = () => {
     try {
       await deleteTrip(deleteTarget.id);
       setDeleteTarget(null);
-      loadTrips(); // refresh the list from the server after delete
+      loadTrips(); 
     } catch (err) {
       setDeleteStatus("error");
       setDeleteError(err.message || "Failed to delete trip. Please try again.");
@@ -127,30 +166,55 @@ const Trips = () => {
 
         {loadStatus === "ready" && trips.length > 0 && (
           <div className="trips__filter">
-            <label className="trips__filter-field">
-              <span>Min budget</span>
-              <input
-                type="number"
-                min="0"
-                inputMode="numeric"
-                placeholder="0"
-                value={minBudget}
-                onChange={(e) => setMinBudget(e.target.value)}
-              />
-            </label>
-            <label className="trips__filter-field">
-              <span>Max budget</span>
-              <input
-                type="number"
-                min="0"
-                inputMode="numeric"
-                placeholder="Any"
-                value={maxBudget}
-                onChange={(e) => setMaxBudget(e.target.value)}
-              />
-            </label>
+            <div className="trips__filter-chips">
+              {BUDGET_PRESETS.map((preset) => (
+                <button
+                  key={preset.label}
+                  type="button"
+                  className={`chip${activePreset?.label === preset.label && !showCustomRange ? " chip--active" : ""}`}
+                  onClick={() => applyPreset(preset)}
+                >
+                  {preset.label}
+                </button>
+              ))}
+              <button
+                type="button"
+                className={`chip${showCustomRange ? " chip--active" : ""}`}
+                onClick={() => setShowCustomRange((v) => !v)}
+              >
+                Custom range
+              </button>
+            </div>
+
+            {showCustomRange && (
+              <div className="trips__filter-custom">
+                <label className="trips__filter-field">
+                  <span>Min</span>
+                  <input
+                    type="number"
+                    min="0"
+                    inputMode="numeric"
+                    placeholder="0"
+                    value={minBudget}
+                    onChange={(e) => setMinBudget(e.target.value)}
+                  />
+                </label>
+                <label className="trips__filter-field">
+                  <span>Max</span>
+                  <input
+                    type="number"
+                    min="0"
+                    inputMode="numeric"
+                    placeholder="Any"
+                    value={maxBudget}
+                    onChange={(e) => setMaxBudget(e.target.value)}
+                  />
+                </label>
+              </div>
+            )}
+
             {hasActiveFilter && (
-              <button type="button" className="btn btn--secondary" onClick={clearFilter}>
+              <button type="button" className="trips__filter-clear" onClick={clearFilter}>
                 Clear filter
               </button>
             )}
@@ -172,6 +236,7 @@ const Trips = () => {
 
         {loadStatus === "ready" && trips.length === 0 && (
           <div className="trips__empty">
+            <div className="trips__empty-icon" aria-hidden="true">🧳</div>
             <p className="trips__empty-title">No trips yet</p>
             <p className="trips__empty-subtitle">
               Start planning your next adventure by creating your first trip.
@@ -205,9 +270,7 @@ const Trips = () => {
                         if (e.key === "Enter" || e.key === " ") handleCardClick(trip);
                       }}
                     >
-                      <div className="trip-card__top">
-                        <h3 className="trip-card__title">{trip.title}</h3>
-
+                      <TripCover trip={trip}>
                         <div className="trip-card__menu">
                           <button
                             type="button"
@@ -235,15 +298,20 @@ const Trips = () => {
                             </div>
                           )}
                         </div>
-                      </div>
 
-                      <p className="trip-card__dates">
-                        {formatDateRange(trip.start_date, trip.end_date)}
-                      </p>
-
-                      <div className="trip-card__footer">
-                        {budgetLabel && <span className="trip-card__budget">{budgetLabel}</span>}
                         {statusLabel && <span className="trip-card__status">{statusLabel}</span>}
+                      </TripCover>
+
+                      <div className="trip-card__body">
+                        <h3 className="trip-card__title">{trip.title}</h3>
+                        <p className="trip-card__dates">
+                          {formatDateRange(trip.start_date, trip.end_date)}
+                        </p>
+                        {budgetLabel && (
+                          <div className="trip-card__footer">
+                            <span className="trip-card__budget">{budgetLabel}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   );

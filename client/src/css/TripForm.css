@@ -65,10 +65,10 @@
 }
 
 .trip-form {
-  padding: 28px 30px 30px;
+  padding: 32px 34px 34px;
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 15px;   
 }
 
 .trip-form__row {
@@ -182,7 +182,10 @@
   }
 
   .trip-form__row {
-    grid-template-columns: 1fr;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 8px;   
   }
 
   .trip-form__actions {
@@ -193,3 +196,10 @@
     width: 100%;
   }
 }
+
+.trip-form__section {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;   
+}
+
