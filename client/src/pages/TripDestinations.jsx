@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
-import {
-  getDestinationsForTrip,
-  createDestination,
-  updateDestination,
-  deleteDestination,
-} from "../services/destinations.js";
+import { useParams } from "react-router-dom";
+import Sidebar from "../components/Sidebar.jsx";
+import AddDestinationForm from "../components/AddDestinationForm.jsx";
+import { getDestinationsForTrip, updateDestination, deleteDestination } from "../services/destinations.js";
+import { getTrip } from "../services/trips.js";
+// .page, .btn*, .profile__card, .profile__form, .field* are shared utility
+// classes that happen to live in Profile.css -- reused here rather than
+// duplicated, same reasoning as importing it for .page originally.
+import "../css/Profile.css";
+import "../css/Destinations.css";
 
 // arrivalDate/departureDate here are plain "YYYY-MM-DD" strings from <input type="date">,
 // so this cheap string comparison is enough to catch the obvious case; the
@@ -26,15 +30,25 @@ const toRequestBody = (form) => ({
   arrivalOrder: form.arrivalOrder || undefined,
 });
 
-// tripId is passed as a prop for now since routing isn't wired up yet on this branch.
-const TripDestinations = ({ tripId }) => {
+// e.g. "Sep 1 – Sep 20, 2026"
+const formatTripDateRange = (startDate, endDate) => {
+  const shortDate = { month: "short", day: "numeric" };
+  const start = startDate ? new Date(startDate).toLocaleDateString(undefined, shortDate) : null;
+  const end = endDate
+    ? new Date(endDate).toLocaleDateString(undefined, { ...shortDate, year: "numeric" })
+    : null;
+  if (start && end) return `${start} – ${end}`;
+  return start || end || null;
+};
+
+const TripDestinations = () => {
+  const { tripId } = useParams();
+  const [trip, setTrip] = useState(null);
   const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [addForm, setAddForm] = useState(emptyForm);
-  const [addError, setAddError] = useState(null);
-  const [isAdding, setIsAdding] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
 
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(emptyForm);
@@ -44,11 +58,15 @@ const TripDestinations = ({ tripId }) => {
   const [deleteError, setDeleteError] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
 
-  const loadDestinations = async () => {
+  const loadData = async () => {
     try {
       setLoading(true);
-      const data = await getDestinationsForTrip(tripId);
-      setDestinations(data);
+      const [tripData, destinationsData] = await Promise.all([
+        getTrip(tripId),
+        getDestinationsForTrip(tripId),
+      ]);
+      setTrip(tripData);
+      setDestinations(destinationsData);
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -58,26 +76,12 @@ const TripDestinations = ({ tripId }) => {
   };
 
   useEffect(() => {
-    loadDestinations();
+    loadData();
   }, [tripId]);
 
-  const handleAddSubmit = async (event) => {
-    event.preventDefault();
-    setAddError(null);
-
-    const dateOrderError = getDateOrderError(addForm.arrivalDate, addForm.departureDate);
-    if (dateOrderError) return setAddError(dateOrderError);
-
-    try {
-      setIsAdding(true);
-      await createDestination(tripId, toRequestBody(addForm));
-      setAddForm(emptyForm);
-      await loadDestinations();
-    } catch (err) {
-      setAddError(err.message);
-    } finally {
-      setIsAdding(false);
-    }
+  const handleDestinationCreated = async () => {
+    setShowAddForm(false);
+    await loadData();
   };
 
   const startEditing = (destination) => {
@@ -109,7 +113,7 @@ const TripDestinations = ({ tripId }) => {
       setIsSavingEdit(true);
       await updateDestination(editingId, toRequestBody(editForm));
       cancelEditing();
-      await loadDestinations();
+      await loadData();
     } catch (err) {
       setEditError(err.message);
     } finally {
@@ -127,7 +131,7 @@ const TripDestinations = ({ tripId }) => {
     try {
       setDeletingId(destination.id);
       await deleteDestination(destination.id);
-      await loadDestinations();
+      await loadData();
     } catch (err) {
       setDeleteError(err.message);
     } finally {
@@ -135,139 +139,182 @@ const TripDestinations = ({ tripId }) => {
     }
   };
 
-  if (loading) return <p>Loading destinations...</p>;
-  if (error) return <p>Error loading destinations: {error}</p>;
+  if (loading) {
+    return (
+      <div className="page">
+        <Sidebar />
+        <main className="destinations">
+          <div className="profile__card profile__loading">Loading destinations…</div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="page">
+        <Sidebar />
+        <main className="destinations">
+          <div className="profile__card profile__error-card">
+            <p>{error}</p>
+            <button type="button" className="btn btn--secondary" onClick={loadData}>
+              Try again
+            </button>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <h2>Destinations</h2>
+    <div className="page">
+      <Sidebar />
 
-      {deleteError && <p>{deleteError}</p>}
-
-      {destinations.length === 0 ? (
-        <p>No destinations yet. Add one below to get started.</p>
-      ) : (
-        <ul>
-          {destinations.map((destination) =>
-            editingId === destination.id ? (
-              <li key={destination.id}>
-                <form onSubmit={handleEditSubmit}>
-                  <input
-                    value={editForm.city}
-                    onChange={(e) => setEditForm({ ...editForm, city: e.target.value })}
-                    placeholder="City"
-                    required
-                  />
-                  <input
-                    value={editForm.country}
-                    onChange={(e) => setEditForm({ ...editForm, country: e.target.value })}
-                    placeholder="Country"
-                    required
-                  />
-                  <input
-                    type="date"
-                    value={editForm.arrivalDate}
-                    onChange={(e) => setEditForm({ ...editForm, arrivalDate: e.target.value })}
-                  />
-                  <input
-                    type="date"
-                    value={editForm.departureDate}
-                    onChange={(e) => setEditForm({ ...editForm, departureDate: e.target.value })}
-                  />
-                  <input
-                    type="number"
-                    value={editForm.arrivalOrder}
-                    onChange={(e) => setEditForm({ ...editForm, arrivalOrder: e.target.value })}
-                    placeholder="Arrival order"
-                  />
-                  {editError && <p>{editError}</p>}
-                  <button type="submit" disabled={isSavingEdit}>
-                    {isSavingEdit ? "Saving..." : "Save"}
-                  </button>
-                  <button type="button" onClick={cancelEditing}>
-                    Cancel
-                  </button>
-                </form>
-              </li>
-            ) : (
-              <li key={destination.id}>
-                {destination.city}, {destination.country}
-                {destination.currency_code && ` (${destination.currency_code})`}
-                {destination.start_date && ` — ${destination.start_date.slice(0, 10)}`}
-                {destination.end_date && ` to ${destination.end_date.slice(0, 10)}`}
-                {" "}
-                <button type="button" onClick={() => startEditing(destination)}>
-                  Edit
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(destination)}
-                  disabled={deletingId === destination.id}
-                >
-                  {deletingId === destination.id ? "Deleting..." : "Delete"}
-                </button>
-              </li>
-            ),
+      <main className="destinations">
+        <header className="destinations__trip-header">
+          <h1>{trip.title}</h1>
+          {formatTripDateRange(trip.start_date, trip.end_date) && (
+            <p className="profile__subtitle">{formatTripDateRange(trip.start_date, trip.end_date)}</p>
           )}
-        </ul>
+        </header>
+
+        <div className="destinations__header">
+          <h2>Destinations</h2>
+          <button type="button" className="btn btn--primary" onClick={() => setShowAddForm(true)}>
+            + Add Destination
+          </button>
+        </div>
+
+        {deleteError && (
+          <div className="profile__form-error" role="alert">
+            {deleteError}
+          </div>
+        )}
+
+        {destinations.length === 0 ? (
+          <div className="profile__card destinations__empty">No destinations yet. Add one to get started.</div>
+        ) : (
+          <div className="destinations__list">
+            {destinations.map((destination) =>
+              editingId === destination.id ? (
+                <div className="profile__card" key={destination.id}>
+                  <form className="profile__form" onSubmit={handleEditSubmit}>
+                    {editError && (
+                      <div className="profile__form-error" role="alert">
+                        {editError}
+                      </div>
+                    )}
+
+                    <label className="field">
+                      <span className="field__label">City</span>
+                      <input
+                        value={editForm.city}
+                        onChange={(e) => setEditForm({ ...editForm, city: e.target.value })}
+                        required
+                        disabled={isSavingEdit}
+                      />
+                    </label>
+
+                    <label className="field">
+                      <span className="field__label">Country</span>
+                      <input
+                        value={editForm.country}
+                        onChange={(e) => setEditForm({ ...editForm, country: e.target.value })}
+                        required
+                        disabled={isSavingEdit}
+                      />
+                    </label>
+
+                    <label className="field">
+                      <span className="field__label">Arrival Date</span>
+                      <input
+                        type="date"
+                        value={editForm.arrivalDate}
+                        onChange={(e) => setEditForm({ ...editForm, arrivalDate: e.target.value })}
+                        disabled={isSavingEdit}
+                      />
+                    </label>
+
+                    <label className="field">
+                      <span className="field__label">Departure Date</span>
+                      <input
+                        type="date"
+                        value={editForm.departureDate}
+                        onChange={(e) => setEditForm({ ...editForm, departureDate: e.target.value })}
+                        disabled={isSavingEdit}
+                      />
+                    </label>
+
+                    <label className="field">
+                      <span className="field__label">Arrival Order</span>
+                      <input
+                        type="number"
+                        value={editForm.arrivalOrder}
+                        onChange={(e) => setEditForm({ ...editForm, arrivalOrder: e.target.value })}
+                        disabled={isSavingEdit}
+                      />
+                    </label>
+
+                    <div className="profile__form-actions">
+                      <button
+                        type="button"
+                        className="btn btn--secondary"
+                        onClick={cancelEditing}
+                        disabled={isSavingEdit}
+                      >
+                        Cancel
+                      </button>
+                      <button type="submit" className="btn btn--primary" disabled={isSavingEdit}>
+                        {isSavingEdit ? "Saving…" : "Save"}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              ) : (
+                <div className="profile__card destinations__row" key={destination.id}>
+                  <div>
+                    <div className="destinations__row-main">
+                      <span className="destinations__city">
+                        {destination.city}, {destination.country}
+                      </span>
+                      {destination.currency_code && (
+                        <span className="destinations__currency">{destination.currency_code}</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="destinations__dates">
+                    {destination.start_date && destination.start_date.slice(0, 10)}
+                    {destination.end_date && ` – ${destination.end_date.slice(0, 10)}`}
+                  </div>
+
+                  <div className="destinations__actions">
+                    <button type="button" className="btn btn--secondary" onClick={() => startEditing(destination)}>
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn--secondary destinations__delete"
+                      onClick={() => handleDelete(destination)}
+                      disabled={deletingId === destination.id}
+                    >
+                      {deletingId === destination.id ? "Deleting…" : "Delete"}
+                    </button>
+                  </div>
+                </div>
+              ),
+            )}
+          </div>
+        )}
+      </main>
+
+      {showAddForm && (
+        <AddDestinationForm
+          tripId={tripId}
+          onCreated={handleDestinationCreated}
+          onCancel={() => setShowAddForm(false)}
+        />
       )}
-
-      <form onSubmit={handleAddSubmit}>
-        <h3>Add Destination</h3>
-
-        <label>
-          City
-          <input
-            value={addForm.city}
-            onChange={(e) => setAddForm({ ...addForm, city: e.target.value })}
-            placeholder="e.g. Sapporo"
-            required
-          />
-        </label>
-
-        <label>
-          Country
-          <input
-            value={addForm.country}
-            onChange={(e) => setAddForm({ ...addForm, country: e.target.value })}
-            placeholder="Japan"
-            required
-          />
-        </label>
-
-        <label>
-          Arrival Date
-          <input
-            type="date"
-            value={addForm.arrivalDate}
-            onChange={(e) => setAddForm({ ...addForm, arrivalDate: e.target.value })}
-          />
-        </label>
-
-        <label>
-          Departure Date
-          <input
-            type="date"
-            value={addForm.departureDate}
-            onChange={(e) => setAddForm({ ...addForm, departureDate: e.target.value })}
-          />
-        </label>
-
-        <label>
-          Arrival Order
-          <input
-            type="number"
-            value={addForm.arrivalOrder}
-            onChange={(e) => setAddForm({ ...addForm, arrivalOrder: e.target.value })}
-          />
-        </label>
-
-        {addError && <p>{addError}</p>}
-
-        <button type="submit" disabled={isAdding}>
-          {isAdding ? "Adding..." : "Add Destination"}
-        </button>
-      </form>
     </div>
   );
 };
