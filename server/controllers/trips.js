@@ -41,7 +41,7 @@ const getTripById = async (req, res) => {
 
 // POST /api/trips — create a trip owned by the current user.
 const createTrip = async (req, res) => {
-  const { title, startDate, endDate, budget } = req.body;
+  const { title, startDate, endDate, budget, imageUrl } = req.body;
 
   if (!title) return res.status(400).json({ error: "title is required" });
   if (startDate !== undefined && !isValidDate(startDate)) {
@@ -64,10 +64,10 @@ const createTrip = async (req, res) => {
     if (!userId) return res.status(404).json({ error: "User not found" });
 
     const { rows } = await pool.query(
-      `INSERT INTO trips (user_id, title, start_date, end_date, budget)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO trips (user_id, title, start_date, end_date, budget, image_url)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
-      [userId, title, startDate, endDate, budget],
+      [userId, title, startDate, endDate, budget, imageUrl],
     );
     res.status(201).json(rows[0]);
   } catch (err) {
@@ -78,7 +78,7 @@ const createTrip = async (req, res) => {
 // PATCH /api/trips/:id — edit a trip owned by the current user (only fields present in the body are changed).
 const updateTrip = async (req, res) => {
   const { id } = req.params;
-  const { title, startDate, endDate, budget } = req.body;
+  const { title, startDate, endDate, budget, imageUrl } = req.body;
   if (!isValidId(id)) return res.status(400).json({ error: "Invalid trip id" });
   if (startDate !== undefined && !isValidDate(startDate)) {
     return res.status(400).json({ error: "start_date is invalid" });
@@ -120,10 +120,11 @@ const updateTrip = async (req, res) => {
        SET title = COALESCE($1, title),
            start_date = COALESCE($2, start_date),
            end_date = COALESCE($3, end_date),
-           budget = COALESCE($4, budget)
-       WHERE id = $5 AND user_id = $6
+           budget = COALESCE($4, budget),
+           image_url = COALESCE($5, image_url)
+       WHERE id = $6 AND user_id = $7
        RETURNING *`,
-      [title, startDate, endDate, budget, id, userId],
+      [title, startDate, endDate, budget, imageUrl, id, userId],
     );
     res.json(rows[0]);
   } catch (err) {
