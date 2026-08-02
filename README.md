@@ -24,15 +24,25 @@ Backend:
 
 ## Features
 
-### 1: Trips
+### 1: User
 
-Will store a list of all the trips the user has planned for in the user profile
+Will store the name, and currency user uses
 
-### 2: Trip
+<img src = "./milestones/features/userprofile.gif">
 
-Will display dates of trip, an itinerary of activities, packing list, and expenses of the trip
+### 2: Trips
 
-### 3: Activity
+Will store title, and display dates of trips (Endpoints complete)
+
+<img src = "./milestones/features/trip_endpoint.gif">
+
+### 3: Destinations
+
+Will store city, country, startdate, enddate, arrival order
+
+<img src = "./milestones/features/destinations_endpoint.gif">
+
+### 4: Activities
 
 Will store the location and type of activity to be part of the trip itinerary
 

@@ -86,13 +86,16 @@ const createTripsTable = async () => {
   }
 };
 
-// Down: DROP TABLE IF EXISTS destinations;
+// Down: DROP TABLE IF EXISTS destinations CASCADE;
 // Up: CREATE TABLE destinations (...) below.
 
+// CASCADE here also drops activities (and any future table referencing
+// destinations), same reasoning as trips' own CASCADE drop above: keeps
+// reset.js resilient regardless of what state the shared dev database is in.
 // Future child tables (activities) should put ON DELETE CASCADE on their own
 // destination_id FK instead of here, so a destination delete cascades too.
 const createDestinationsTableQuery = `
-  DROP TABLE IF EXISTS destinations;
+  DROP TABLE IF EXISTS destinations CASCADE;
 
   CREATE TABLE destinations (
     id SERIAL PRIMARY KEY,
@@ -115,11 +118,84 @@ const createDestinationsTable = async () => {
   }
 };
 
+const createExpensesTableQuery = `
+  DROP TABLE IF EXISTS expenses;
+  CREATE TABLE expenses (
+    id SERIAL PRIMARY KEY,
+    trip_id INTEGER NOT NULL REFERENCES trips(id) ON DELETE CASCADE,
+    amount_usd DECIMAL(12, 2) NOT NULL,
+    category VARCHAR NOT NULL,
+    status VARCHAR NOT NULL DEFAULT 'actual',
+    description TEXT,
+    spent_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    CHECK (status IN ('estimated', 'actual')),
+    CHECK (category IN ('lodging', 'travel', 'activity', 'food'))
+  );
+`;
+
+const createExpensesTable = async () => {
+  try {
+    await pool.query (createExpensesTableQuery);
+    console.log("✅ expenses table created successfully");
+  } catch (error) {
+    console.error("⚠️ Error creating expenses table:", error);
+  }
+};
+
+const createPackingListTableQuery = `
+  DROP TABLE IF EXISTS packing_list;
+  CREATE TABLE packing_list (
+    id SERIAL PRIMARY KEY,
+    trip_id INTEGER NOT NULL REFERENCES trips(id) ON DELETE CASCADE,
+    name VARCHAR NOT NULL,
+    is_packed BOOLEAN NOT NULL DEFAULT FALSE,
+    is_auto_generated BOOLEAN NOT NULL DEFAULT FALSE
+  );
+`;
+
+const createPackingListTable = async () => {
+  try {
+    await pool.query(createPackingListTableQuery);
+    console.log("✅ packing_list table created successfully");
+  } catch (error) {
+    console.error("⚠️ Error creating packing_list table:", error);
+  }
+};
+
+// Down: DROP TABLE IF EXISTS activities;
+// Up: CREATE TABLE activities (...) below.
+const createActivitiesTableQuery = `
+  DROP TABLE IF EXISTS activities;
+
+  CREATE TABLE activities (
+    id SERIAL PRIMARY KEY,
+    destination_id INTEGER NOT NULL REFERENCES destinations(id) ON DELETE CASCADE,
+    name VARCHAR NOT NULL,
+    scheduled_date DATE,
+    start_time TIME,
+    duration_minutes INTEGER,
+    notes TEXT
+  );
+`;
+
+const createActivitiesTable = async () => {
+  try {
+    await pool.query(createActivitiesTableQuery);
+    console.log("✅ activities table created successfully");
+  } catch (error) {
+    console.error("⚠️ Error creating activities table:", error);
+  }
+};
+
 const seedDBs = async () => {
   try {
     await seedUsers();
     await createTripsTable();
+    await createPackingListTable();
+    await createExpensesTable();
     await createDestinationsTable();
+    await createActivitiesTable();
     console.log("Database seeding complete.");
   } catch (err) {
     console.error("Database seeding failed:", err);

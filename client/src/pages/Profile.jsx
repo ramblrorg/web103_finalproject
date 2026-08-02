@@ -57,22 +57,33 @@ const Profile = () => {
     loadProfile();
   }, []);
 
+  // Owns the toast's own lifecycle so callers just flip `justSaved` to true
+  // and don't need to know or manage the timeout themselves.
+  useEffect(() => {
+    if (!justSaved) return;
+    const id = window.setTimeout(() => setJustSaved(false), 3000);
+    return () => window.clearTimeout(id);
+  }, [justSaved]);
+
+  // Clears out any leftover validation/save state from a previous edit attempt.
+  const resetFormStatus = () => {
+    setFormError("");
+    setSaveStatus("idle");
+    setSaveError("");
+  };
+
   const startEditing = () => {
     setForm({
       displayName: user?.display_name || "",
       homeCurrency: user?.home_currency || DEFAULT_CURRENCY,
     });
-    setFormError("");
-    setSaveStatus("idle");
-    setSaveError("");
+    resetFormStatus();
     setIsEditing(true);
   };
 
   const cancelEditing = () => {
     setIsEditing(false);
-    setFormError("");
-    setSaveStatus("idle");
-    setSaveError("");
+    resetFormStatus();
   };
 
   const handleFieldChange = (field) => (e) => {
@@ -103,7 +114,6 @@ const Profile = () => {
       setIsEditing(false);
       setSaveStatus("idle");
       setJustSaved(true);
-      window.setTimeout(() => setJustSaved(false), 3000);
     } catch (err) {
       // Keep the existing profile info on screen; only surface the error.
       setSaveStatus("error");

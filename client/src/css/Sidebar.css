@@ -79,3 +79,49 @@
 .sidebar__logout {
   margin-top: auto;
 }
+
+/* Below tablet width, the sidebar becomes a horizontal top bar instead of
+   a fixed-width column, so it doesn't eat into the content area on phones. */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    min-height: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-right: none;
+    border-bottom: 1px solid var(--sand-border);
+  }
+
+  .sidebar__brand-name {
+    display: none;
+  }
+
+  .sidebar__nav {
+    flex-direction: row;
+    flex: 1;
+    gap: 2px;
+    overflow-x: auto;
+  }
+
+  .sidebar__link {
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px 8px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .sidebar__icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .sidebar__logout {
+    flex-direction: column;
+    margin-top: 0;
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+}
