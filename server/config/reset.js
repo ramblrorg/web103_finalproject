@@ -73,6 +73,7 @@ const createTripsTableQuery = `
     start_date DATE,
     end_date DATE,
     budget DECIMAL(12, 2),
+    image_url VARCHAR,
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
   );
 `;
