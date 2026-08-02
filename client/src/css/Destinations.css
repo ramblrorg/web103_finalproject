@@ -1,0 +1,125 @@
+.destinations {
+  flex: 1;
+  padding: 32px 40px 60px;
+  max-width: 720px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.destinations__trip-header {
+  margin-bottom: 20px;
+}
+
+.destinations__trip-header h1 {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--sand-text);
+  margin: 0;
+}
+
+.destinations__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.destinations__header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--sand-text);
+  margin: 0;
+}
+
+.destinations__empty {
+  color: var(--sand-text-soft);
+  font-size: 14px;
+}
+
+.destinations__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.destinations__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.destinations__row-main {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.destinations__city {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--sand-text);
+}
+
+.destinations__currency {
+  font-size: 12px;
+  color: var(--sand-muted);
+  background: var(--sand-chip);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.destinations__dates {
+  font-size: 13px;
+  color: var(--sand-text-soft);
+  flex: 1;
+  text-align: right;
+  padding-right: 16px;
+}
+
+.destinations__actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.destinations__delete {
+  color: var(--sand-error-text);
+  border-color: var(--sand-error-border);
+}
+
+.destinations__delete:hover:not(:disabled) {
+  background: var(--sand-error-bg);
+}
+
+/* Tablet and down: sidebar stacks on top (see Sidebar.css), so give the
+   content its own comfortable padding instead of the desktop max-width. */
+@media (max-width: 768px) {
+  .destinations {
+    padding: 24px 20px 40px;
+    max-width: none;
+  }
+}
+
+/* Phones: a row's city/dates/actions no longer fit on one line. */
+@media (max-width: 480px) {
+  .destinations__row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .destinations__dates {
+    text-align: left;
+    padding-right: 0;
+  }
+
+  .destinations__actions {
+    align-self: stretch;
+  }
+
+  .destinations__actions .btn {
+    flex: 1;
+  }
+}
