@@ -1,0 +1,195 @@
+.trip-form-page {
+  flex: 1;
+  padding: 32px 40px 60px;
+  max-width: 900px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.trip-form__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: none;
+  color: var(--sand-text-soft);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 18px;
+}
+
+.trip-form__back:hover {
+  color: var(--sand-text);
+}
+
+.trip-form__title {
+  margin: 0 0 6px;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--sand-text);
+}
+
+.trip-form__subtitle {
+  margin: 0 0 26px;
+  font-size: 14px;
+  color: var(--sand-text-soft);
+}
+
+.trip-form__card {
+  background: var(--sand-surface);
+  border: 1px solid var(--sand-border);
+  border-radius: 16px;
+}
+
+.trip-form__status {
+  padding: 22px 24px;
+  color: var(--sand-text-soft);
+  font-size: 14px;
+}
+
+.trip-form__status--error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--sand-error-text);
+}
+
+.trip-form__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 24px;
+  align-items: start;
+}
+
+.trip-form {
+  padding: 28px 30px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.trip-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.trip-form .field input {
+  padding: 12px 14px;
+  font-size: 15px;
+}
+
+.trip-form__budget-input {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--sand-border);
+  border-radius: 9px;
+  background: var(--sand-surface);
+  overflow: hidden;
+}
+
+.trip-form__budget-input:focus-within {
+  border-color: var(--sand-accent);
+}
+
+.trip-form__budget-input--error {
+  border-color: var(--sand-error-border);
+}
+
+.trip-form__budget-prefix {
+  padding: 0 0 0 14px;
+  color: var(--sand-muted);
+  font-size: 15px;
+}
+
+.trip-form__budget-input input {
+  border: none !important;
+  padding: 12px 14px 12px 6px !important;
+}
+
+.trip-form__budget-input input:focus {
+  outline: none;
+}
+
+.trip-form__actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.trip-form__actions .btn--primary {
+  padding: 12px 26px;
+}
+
+.trip-form__actions .btn--secondary {
+  padding: 12px 26px;
+}
+
+/* Live preview panel */
+.trip-form__preview {
+  position: sticky;
+  top: 32px;
+}
+
+.trip-form__preview-label {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--sand-muted);
+}
+
+.trip-card--preview {
+  cursor: default;
+  pointer-events: none;
+}
+
+.trip-card--preview .trip-card__title {
+  overflow-wrap: anywhere;
+}
+
+.trip-form__preview-hint {
+  margin: 10px 4px 0;
+  font-size: 12px;
+  color: var(--sand-muted);
+  line-height: 1.5;
+}
+
+@media (max-width: 860px) {
+  .trip-form__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .trip-form__preview {
+    position: static;
+    max-width: 340px;
+  }
+}
+
+@media (max-width: 768px) {
+  .trip-form-page {
+    padding: 24px 20px 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .trip-form {
+    padding: 22px 18px 24px;
+  }
+
+  .trip-form__row {
+    grid-template-columns: 1fr;
+  }
+
+  .trip-form__actions {
+    flex-direction: column-reverse;
+  }
+
+  .trip-form__actions .btn {
+    width: 100%;
+  }
+}
