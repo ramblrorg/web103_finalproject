@@ -2,26 +2,35 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar.jsx";
 import AddDestinationForm from "../components/AddDestinationForm.jsx";
-import { getDestinationsForTrip, updateDestination, deleteDestination } from "../services/destinations.js";
-import { fetchTripById } from '../services/trips.js';
-import { formatDateRange, toDateInputValue } from "../helpers/tripFormat.js";
-// .page, .btn*, .profile__card, .profile__form, .field* are shared utility
-// classes that happen to live in Profile.css -- reused here rather than
-// duplicated, same reasoning as importing it for .page originally.
+import TripQuickActions from "../components/TripQuickActions.jsx";
+import {
+  getDestinationsForTrip,
+  updateDestination,
+  deleteDestination,
+} from "../services/destinations.js";
+import { fetchTripById } from "../services/trips.js";
+import {
+  formatDateRange,
+  toDateInputValue,
+} from "../helpers/tripFormat.js";
 import "../css/Profile.css";
 import "../css/Destinations.css";
 
-// arrivalDate/departureDate here are plain "YYYY-MM-DD" strings from <input type="date">,
-// so this cheap string comparison is enough to catch the obvious case; the
-// trip-date-range check is left to the backend's existing validation.
 const getDateOrderError = (arrivalDate, departureDate) => {
   if (arrivalDate && departureDate && departureDate < arrivalDate) {
     return "Departure date cannot be before arrival date.";
   }
+
   return null;
 };
 
-const emptyForm = { city: "", country: "", arrivalDate: "", departureDate: "", arrivalOrder: "" };
+const emptyForm = {
+  city: "",
+  country: "",
+  arrivalDate: "",
+  departureDate: "",
+  arrivalOrder: "",
+};
 
 const toRequestBody = (form) => ({
   city: form.city,
@@ -34,6 +43,7 @@ const toRequestBody = (form) => ({
 const TripDestinations = () => {
   const { tripId } = useParams();
   const navigate = useNavigate();
+
   const [trip, setTrip] = useState(null);
   const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -52,10 +62,12 @@ const TripDestinations = () => {
   const loadData = async () => {
     try {
       setLoading(true);
+
       const [tripData, destinationsData] = await Promise.all([
         fetchTripById(tripId),
         getDestinationsForTrip(tripId),
       ]);
+
       setTrip(tripData);
       setDestinations(destinationsData);
       setError(null);
@@ -97,8 +109,15 @@ const TripDestinations = () => {
     event.preventDefault();
     setEditError(null);
 
-    const dateOrderError = getDateOrderError(editForm.arrivalDate, editForm.departureDate);
-    if (dateOrderError) return setEditError(dateOrderError);
+    const dateOrderError = getDateOrderError(
+      editForm.arrivalDate,
+      editForm.departureDate,
+    );
+
+    if (dateOrderError) {
+      setEditError(dateOrderError);
+      return;
+    }
 
     try {
       setIsSavingEdit(true);
@@ -116,9 +135,13 @@ const TripDestinations = () => {
     const confirmed = window.confirm(
       `Delete ${destination.city}, ${destination.country}? Its activities will be removed too.`,
     );
-    if (!confirmed) return;
+
+    if (!confirmed) {
+      return;
+    }
 
     setDeleteError(null);
+
     try {
       setDeletingId(destination.id);
       await deleteDestination(destination.id);
@@ -134,8 +157,11 @@ const TripDestinations = () => {
     return (
       <div className="page">
         <Sidebar />
+
         <main className="destinations">
-          <div className="profile__card profile__loading">Loading destinations…</div>
+          <div className="profile__card profile__loading">
+            Loading destinations…
+          </div>
         </main>
       </div>
     );
@@ -145,10 +171,16 @@ const TripDestinations = () => {
     return (
       <div className="page">
         <Sidebar />
+
         <main className="destinations">
           <div className="profile__card profile__error-card">
             <p>{error}</p>
-            <button type="button" className="btn btn--secondary" onClick={loadData}>
+
+            <button
+              type="button"
+              className="btn btn--secondary"
+              onClick={loadData}
+            >
               Try again
             </button>
           </div>
@@ -164,158 +196,221 @@ const TripDestinations = () => {
       <main className="destinations">
         <header className="destinations__trip-header">
           <h1>{trip.title}</h1>
-          <p className="profile__subtitle">{formatDateRange(trip.start_date, trip.end_date)}</p>
+          <p className="profile__subtitle">
+            {formatDateRange(trip.start_date, trip.end_date)}
+          </p>
         </header>
 
-        <div className="destinations__header">
-          <h2>Destinations</h2>
-          <button type="button" className="btn btn--primary" onClick={() => setShowAddForm(true)}>
-            + Add Destination
-          </button>
-        </div>
+        <div className="destinations__layout">
+          <div className="destinations__main-col">
+            <div className="destinations__header">
+              <h2>Destinations</h2>
 
-        {deleteError && (
-          <div className="profile__form-error" role="alert">
-            {deleteError}
-          </div>
-        )}
+              <button
+                type="button"
+                className="btn btn--primary"
+                onClick={() => setShowAddForm(true)}
+              >
+                + Add Destination
+              </button>
+            </div>
 
-        {destinations.length === 0 ? (
-          <div className="profile__card destinations__empty">No destinations yet. Add one to get started.</div>
-        ) : (
-          <div className="destinations__list">
-            {destinations.map((destination) =>
-              editingId === destination.id ? (
-                <div className="profile__card" key={destination.id}>
-                  <form className="profile__form" onSubmit={handleEditSubmit}>
-                    {editError && (
-                      <div className="profile__form-error" role="alert">
-                        {editError}
-                      </div>
-                    )}
+            {deleteError && (
+              <div className="profile__form-error" role="alert">
+                {deleteError}
+              </div>
+            )}
 
-                    <label className="field">
-                      <span className="field__label">City</span>
-                      <input
-                        value={editForm.city}
-                        onChange={(e) => setEditForm({ ...editForm, city: e.target.value })}
-                        required
-                        disabled={isSavingEdit}
-                      />
-                    </label>
-
-                    <label className="field">
-                      <span className="field__label">Country</span>
-                      <input
-                        value={editForm.country}
-                        onChange={(e) => setEditForm({ ...editForm, country: e.target.value })}
-                        required
-                        disabled={isSavingEdit}
-                      />
-                    </label>
-
-                    <label className="field">
-                      <span className="field__label">Arrival Date</span>
-                      <input
-                        type="date"
-                        value={editForm.arrivalDate}
-                        onChange={(e) => setEditForm({ ...editForm, arrivalDate: e.target.value })}
-                        disabled={isSavingEdit}
-                      />
-                    </label>
-
-                    <label className="field">
-                      <span className="field__label">Departure Date</span>
-                      <input
-                        type="date"
-                        value={editForm.departureDate}
-                        onChange={(e) => setEditForm({ ...editForm, departureDate: e.target.value })}
-                        disabled={isSavingEdit}
-                      />
-                    </label>
-
-                    <label className="field">
-                      <span className="field__label">Arrival Order</span>
-                      <input
-                        type="number"
-                        value={editForm.arrivalOrder}
-                        onChange={(e) => setEditForm({ ...editForm, arrivalOrder: e.target.value })}
-                        disabled={isSavingEdit}
-                      />
-                    </label>
-
-                    <div className="profile__form-actions">
-                      <button
-                        type="button"
-                        className="btn btn--secondary"
-                        onClick={cancelEditing}
-                        disabled={isSavingEdit}
+            {destinations.length === 0 ? (
+              <div className="profile__card destinations__empty">
+                No destinations yet. Add one to get started.
+              </div>
+            ) : (
+              <div className="destinations__list">
+                {destinations.map((destination) =>
+                  editingId === destination.id ? (
+                    <div className="profile__card" key={destination.id}>
+                      <form
+                        className="profile__form"
+                        onSubmit={handleEditSubmit}
                       >
-                        Cancel
-                      </button>
-                      <button type="submit" className="btn btn--primary" disabled={isSavingEdit}>
-                        {isSavingEdit ? "Saving…" : "Save"}
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              ) : (
-                <div
-                  className="profile__card destinations__row destinations__row--clickable"
-                  key={destination.id}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => navigate(`/trips/${tripId}/destinations/${destination.id}/activities`)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      navigate(`/trips/${tripId}/destinations/${destination.id}/activities`);
-                    }
-                  }}
-                >
-                  <div>
-                    <div className="destinations__row-main">
-                      <span className="destinations__city">
-                        {destination.city}, {destination.country}
-                      </span>
-                      {destination.currency_code && (
-                        <span className="destinations__currency">{destination.currency_code}</span>
-                      )}
-                    </div>
-                  </div>
+                        {editError && (
+                          <div className="profile__form-error" role="alert">
+                            {editError}
+                          </div>
+                        )}
 
-                  <div className="destinations__dates">
-                    {formatDateRange(destination.start_date, destination.end_date)}
-                  </div>
+                        <label className="field">
+                          <span className="field__label">City</span>
+                          <input
+                            value={editForm.city}
+                            onChange={(event) =>
+                              setEditForm({
+                                ...editForm,
+                                city: event.target.value,
+                              })
+                            }
+                            required
+                            disabled={isSavingEdit}
+                          />
+                        </label>
 
-                  <div className="destinations__actions">
-                    <button
-                      type="button"
-                      className="btn btn--secondary"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        startEditing(destination);
+                        <label className="field">
+                          <span className="field__label">Country</span>
+                          <input
+                            value={editForm.country}
+                            onChange={(event) =>
+                              setEditForm({
+                                ...editForm,
+                                country: event.target.value,
+                              })
+                            }
+                            required
+                            disabled={isSavingEdit}
+                          />
+                        </label>
+
+                        <label className="field">
+                          <span className="field__label">Arrival Date</span>
+                          <input
+                            type="date"
+                            value={editForm.arrivalDate}
+                            onChange={(event) =>
+                              setEditForm({
+                                ...editForm,
+                                arrivalDate: event.target.value,
+                              })
+                            }
+                            disabled={isSavingEdit}
+                          />
+                        </label>
+
+                        <label className="field">
+                          <span className="field__label">Departure Date</span>
+                          <input
+                            type="date"
+                            value={editForm.departureDate}
+                            onChange={(event) =>
+                              setEditForm({
+                                ...editForm,
+                                departureDate: event.target.value,
+                              })
+                            }
+                            disabled={isSavingEdit}
+                          />
+                        </label>
+
+                        <label className="field">
+                          <span className="field__label">Arrival Order</span>
+                          <input
+                            type="number"
+                            value={editForm.arrivalOrder}
+                            onChange={(event) =>
+                              setEditForm({
+                                ...editForm,
+                                arrivalOrder: event.target.value,
+                              })
+                            }
+                            disabled={isSavingEdit}
+                          />
+                        </label>
+
+                        <div className="profile__form-actions">
+                          <button
+                            type="button"
+                            className="btn btn--secondary"
+                            onClick={cancelEditing}
+                            disabled={isSavingEdit}
+                          >
+                            Cancel
+                          </button>
+
+                          <button
+                            type="submit"
+                            className="btn btn--primary"
+                            disabled={isSavingEdit}
+                          >
+                            {isSavingEdit ? "Saving…" : "Save"}
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  ) : (
+                    <div
+                      className="profile__card destinations__row destinations__row--clickable"
+                      key={destination.id}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() =>
+                        navigate(
+                          `/trips/${tripId}/destinations/${destination.id}/activities`,
+                        )
+                      }
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          navigate(
+                            `/trips/${tripId}/destinations/${destination.id}/activities`,
+                          );
+                        }
                       }}
                     >
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn--secondary destinations__delete"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete(destination);
-                      }}
-                      disabled={deletingId === destination.id}
-                    >
-                      {deletingId === destination.id ? "Deleting…" : "Delete"}
-                    </button>
-                  </div>
-                </div>
-              ),
+                      <div>
+                        <div className="destinations__row-main">
+                          <span className="destinations__city">
+                            {destination.city}, {destination.country}
+                          </span>
+
+                          {destination.currency_code && (
+                            <span className="destinations__currency">
+                              {destination.currency_code}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="destinations__dates">
+                        {formatDateRange(
+                          destination.start_date,
+                          destination.end_date,
+                        )}
+                      </div>
+
+                      <div className="destinations__actions">
+                        <button
+                          type="button"
+                          className="btn btn--secondary"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            startEditing(destination);
+                          }}
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          type="button"
+                          className="btn btn--secondary destinations__delete"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleDelete(destination);
+                          }}
+                          disabled={deletingId === destination.id}
+                        >
+                          {deletingId === destination.id
+                            ? "Deleting…"
+                            : "Delete"}
+                        </button>
+                      </div>
+                    </div>
+                  ),
+                )}
+              </div>
             )}
           </div>
-        )}
+
+          <TripQuickActions tripId={tripId} />
+        </div>
       </main>
 
       {showAddForm && (

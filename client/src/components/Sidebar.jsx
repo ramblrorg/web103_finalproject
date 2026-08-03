@@ -4,18 +4,20 @@ import {
   TripsIcon,
   ItineraryIcon,
   BudgetIcon,
-  PackingIcon,
   ProfileIcon,
   LogoutIcon,
 } from "../assets/icons/index.js";
 import "../css/Sidebar.css";
 
+// Packing List isn't included here: it's always scoped to a specific trip
+// (route is /trips/:tripId/packing-list), so a bare top-level link has
+// nowhere real to go. It's reached from each Trip Dashboard instead, the
+// same way Activities is.
 const NAV_ITEMS = [
   { label: "Dashboard", path: "/dashboard", Icon: DashboardIcon },
   { label: "My Trips", path: "/trips", Icon: TripsIcon },
   { label: "Itinerary", path: "/itinerary", Icon: ItineraryIcon },
   { label: "Budget", path: "/budget", Icon: BudgetIcon },
-  { label: "Packing List", path: "/packing-list", Icon: PackingIcon },
   { label: "Profile", path: "/profile", Icon: ProfileIcon },
 ];
 

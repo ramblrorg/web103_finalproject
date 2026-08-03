@@ -1,0 +1,123 @@
+.quick-actions {
+  background: var(--sand-surface);
+  border: 1px solid var(--sand-border);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 4px 16px rgba(74, 63, 47, 0.06);
+}
+
+.quick-actions__heading {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--sand-muted);
+}
+
+.quick-actions__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.quick-actions__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 10px;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+button.quick-actions__item:hover {
+  background: var(--sand-bg);
+  transform: translateX(2px);
+}
+
+button.quick-actions__item:active {
+  transform: translateX(2px) scale(0.99);
+}
+
+.quick-actions__item--disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.quick-actions__icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sand-accent);
+}
+
+.quick-actions__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.quick-actions__icon--packing {
+  background: #efe6d6;
+}
+
+.quick-actions__icon--expenses {
+  background: var(--sand-success-bg);
+  color: var(--sand-success-text);
+}
+
+.quick-actions__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.quick-actions__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--sand-text);
+}
+
+.quick-actions__subtitle {
+  font-size: 12px;
+  color: var(--sand-text-soft);
+  line-height: 1.4;
+}
+
+.quick-actions__badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--sand-text-soft);
+  background: var(--sand-chip);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.quick-actions__chevron {
+  flex-shrink: 0;
+  font-size: 18px;
+  color: var(--sand-muted);
+  transition: transform 0.15s ease, color 0.15s ease;
+  padding-top: 6px;
+}
+
+button.quick-actions__item:hover .quick-actions__chevron {
+  transform: translateX(3px);
+  color: var(--sand-accent);
+}
