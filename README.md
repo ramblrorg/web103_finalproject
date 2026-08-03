@@ -34,13 +34,13 @@ Will store the name, and currency user uses
 
 Will store title, and display dates of trips (Endpoints complete)
 
-<img src = "./milestones/features/trip_endpoint.gif">
+<img src = "./milestones/features/trips.gif">
 
 ### 3: Destinations
 
 Will store city, country, startdate, enddate, arrival order
 
-<img src = "./milestones/features/destinations_endpoint.gif">
+<img src = "./milestones/features/destinations.gif">
 
 ### 4: Activities
 
