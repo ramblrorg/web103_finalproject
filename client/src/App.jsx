@@ -6,6 +6,13 @@ import TripForm from "./pages/TripForm.jsx";
 import TripDestinations from "./pages/TripDestinations.jsx";
 import Activities from "./pages/Activities.jsx";
 import PackingList from "./pages/PackingList.jsx";
+import React from 'react';
+import { useRoutes, Navigate } from 'react-router-dom';
+import Profile from './pages/Profile.jsx';
+import Trips from './pages/Trips.jsx';
+import TripForm from './pages/TripForm.jsx';
+import TripDestinations from './pages/TripDestinations.jsx';
+import TripExpenses from './pages/TripExpenses.jsx';
 
 const App = () => {
   const element = useRoutes([
@@ -23,6 +30,7 @@ const App = () => {
       path: "/trips/:tripId/packing-list",
       element: <PackingList />,
     },
+    { path: "/trips/:tripId/expenses", element: <TripExpenses /> },
   ]);
 
   return <div className="app">{element}</div>;
