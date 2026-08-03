@@ -77,4 +77,3 @@ export const deleteTrip = async (id) => {
   }
 };
 
-export { getAllTrips, getTripById, createTrip, updateTrip, deleteTrip };
