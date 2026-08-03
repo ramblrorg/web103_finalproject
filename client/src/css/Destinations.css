@@ -84,11 +84,18 @@
   flex-shrink: 0;
 }
 
-.destinations__actions a.btn {
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
-  box-sizing: border-box;
+.destinations__row--clickable {
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.destinations__row--clickable:hover {
+  background: var(--sand-chip);
+}
+
+.destinations__row--clickable:focus-visible {
+  outline: 2px solid var(--sand-accent);
+  outline-offset: 2px;
 }
 
 .destinations__delete {
