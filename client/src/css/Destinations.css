@@ -1,9 +1,26 @@
 .destinations {
   flex: 1;
   padding: 32px 40px 60px;
-  max-width: 720px;
+  max-width: 980px;
   width: 100%;
   box-sizing: border-box;
+}
+
+.destinations__layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+  align-items: start;
+}
+
+.destinations__main-col {
+  min-width: 0;
+}
+
+@media (max-width: 860px) {
+  .destinations__layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 .destinations__trip-header {
