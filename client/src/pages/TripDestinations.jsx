@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar.jsx";
 import AddDestinationForm from "../components/AddDestinationForm.jsx";
 import { getDestinationsForTrip, updateDestination, deleteDestination } from "../services/destinations.js";
@@ -33,6 +33,7 @@ const toRequestBody = (form) => ({
 
 const TripDestinations = () => {
   const { tripId } = useParams();
+  const navigate = useNavigate();
   const [trip, setTrip] = useState(null);
   const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -259,7 +260,19 @@ const TripDestinations = () => {
                   </form>
                 </div>
               ) : (
-                <div className="profile__card destinations__row" key={destination.id}>
+                <div
+                  className="profile__card destinations__row destinations__row--clickable"
+                  key={destination.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => navigate(`/trips/${tripId}/destinations/${destination.id}/activities`)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      navigate(`/trips/${tripId}/destinations/${destination.id}/activities`);
+                    }
+                  }}
+                >
                   <div>
                     <div className="destinations__row-main">
                       <span className="destinations__city">
@@ -276,13 +289,23 @@ const TripDestinations = () => {
                   </div>
 
                   <div className="destinations__actions">
-                    <button type="button" className="btn btn--secondary" onClick={() => startEditing(destination)}>
+                    <button
+                      type="button"
+                      className="btn btn--secondary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        startEditing(destination);
+                      }}
+                    >
                       Edit
                     </button>
                     <button
                       type="button"
                       className="btn btn--secondary destinations__delete"
-                      onClick={() => handleDelete(destination)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(destination);
+                      }}
                       disabled={deletingId === destination.id}
                     >
                       {deletingId === destination.id ? "Deleting…" : "Delete"}

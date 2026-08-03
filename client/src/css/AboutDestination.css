@@ -1,0 +1,104 @@
+.about-destination {
+  background: var(--sand-surface);
+  border: 1px solid var(--sand-border);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(74, 63, 47, 0.06);
+  height: max-content;
+}
+
+.about-destination__photo {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--sand-chip) 0%, var(--sand-accent) 160%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.about-destination__photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.about-destination__photo-glyph {
+  font-size: 28px;
+  color: #fffcf7;
+  opacity: 0.9;
+  transform: rotate(45deg);
+}
+
+.about-destination__title {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--sand-text);
+}
+
+.about-destination__blurb {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--sand-text-soft);
+}
+
+.about-destination__divider {
+  height: 1px;
+  background: var(--sand-border-soft);
+  margin: 18px 0 16px;
+}
+
+.about-destination__section-title {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--sand-text);
+}
+
+.about-destination__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.about-destination__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--sand-text-soft);
+}
+
+.about-destination__row-icon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--sand-chip);
+  color: var(--sand-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-destination__row-icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* Sidebar collapses above the activity list once the two-column layout
+   breaks (see .activities__layout in Activities.css). */
+@media (max-width: 900px) {
+  .about-destination__photo {
+    aspect-ratio: 21 / 9;
+  }
+}
