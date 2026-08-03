@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar.jsx";
 import AddDestinationForm from "../components/AddDestinationForm.jsx";
 import { getDestinationsForTrip, updateDestination, deleteDestination } from "../services/destinations.js";
-import { getTrip } from "../services/trips.js";
+import { fetchTripById } from '../services/trips.js';
 // .page, .btn*, .profile__card, .profile__form, .field* are shared utility
 // classes that happen to live in Profile.css -- reused here rather than
 // duplicated, same reasoning as importing it for .page originally.
@@ -62,7 +62,7 @@ const TripDestinations = () => {
     try {
       setLoading(true);
       const [tripData, destinationsData] = await Promise.all([
-        getTrip(tripId),
+        fetchTripById(tripId),
         getDestinationsForTrip(tripId),
       ]);
       setTrip(tripData);
