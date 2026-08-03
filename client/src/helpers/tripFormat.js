@@ -5,7 +5,7 @@ export const toDateInputValue = (value) => (value ? String(value).slice(0, 10) :
 
 export const formatDateRange = (start, end) => {
   const fmt = (d) =>
-    new Date(`${d}T00:00:00`).toLocaleDateString(undefined, {
+    new Date(`${toDateInputValue(d)}T00:00:00`).toLocaleDateString(undefined, {
       month: "short",
       day: "numeric",
       year: "numeric",
@@ -35,8 +35,8 @@ export const getStatusLabel = (start, end) => {
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const startDate = new Date(`${start}T00:00:00`);
-  const endDate = end ? new Date(`${end}T00:00:00`) : null;
+  const startDate = new Date(`${toDateInputValue(start)}T00:00:00`);
+  const endDate = end ? new Date(`${toDateInputValue(end)}T00:00:00`) : null;
   const msPerDay = 86400000;
 
   if (endDate && today > endDate) return "Trip completed";
