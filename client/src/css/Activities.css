@@ -1,0 +1,359 @@
+.activities {
+  flex: 1;
+  padding: 32px 40px 60px;
+  max-width: 1120px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.activities__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 28px;
+  align-items: start;
+}
+
+.activities__main {
+  min-width: 0;
+}
+
+.activities__back {
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--sand-text-soft);
+  text-decoration: none;
+  margin-bottom: 18px;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.activities__back:hover {
+  color: var(--sand-accent);
+  transform: translateX(-2px);
+}
+
+.activities__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.activities__breadcrumb {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--sand-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.activities__breadcrumb span {
+  padding: 0 4px;
+  color: var(--sand-accent);
+}
+
+.activities__header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--sand-text);
+}
+
+.activities__header .btn--primary {
+  box-shadow: 0 6px 16px rgba(107, 83, 53, 0.22);
+}
+
+.activities__tabs {
+  display: flex;
+  gap: 6px;
+  background: var(--sand-chip);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 22px;
+  width: max-content;
+}
+
+.activities__tab {
+  background: none;
+  border: none;
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sand-text-soft);
+  padding: 8px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.activities__tab:hover {
+  color: var(--sand-text);
+}
+
+.activities__tab--active {
+  color: var(--sand-accent);
+  background: var(--sand-surface);
+  box-shadow: 0 2px 6px rgba(74, 63, 47, 0.1);
+}
+
+.activities__tab-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fffcf7;
+  background: var(--sand-accent);
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+
+.activities__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  color: var(--sand-text-soft);
+  font-size: 14px;
+  padding: 40px 24px;
+  box-shadow: 0 4px 16px rgba(74, 63, 47, 0.06);
+}
+
+.activities__empty-glyph {
+  font-size: 26px;
+}
+
+.activities__days {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin-bottom: 18px;
+}
+
+.activities__day-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--sand-text);
+}
+
+.activities__day-label::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--sand-accent);
+  flex-shrink: 0;
+}
+
+.activities__list {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 24px;
+  box-shadow: 0 4px 16px rgba(74, 63, 47, 0.06);
+}
+
+.activity-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 10px;
+  margin: 0 -10px;
+  border-top: 1px solid var(--sand-border-soft);
+  border-radius: 10px;
+  transition: background 0.15s ease;
+}
+
+.activity-row:first-child {
+  border-top: none;
+}
+
+.activity-row:hover {
+  background: var(--sand-bg);
+}
+
+.activity-row__time {
+  flex-shrink: 0;
+  width: 84px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sand-accent);
+  background: var(--sand-chip);
+  border-radius: 7px;
+  padding: 4px 8px;
+  text-align: center;
+}
+
+.activity-row__time--empty {
+  color: var(--sand-muted);
+  background: transparent;
+  font-weight: 500;
+}
+
+.activity-row__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.activity-row__name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sand-text);
+}
+
+.activity-row__sub {
+  font-size: 12px;
+  color: var(--sand-text-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activity-row__busy {
+  font-size: 12px;
+  color: var(--sand-muted);
+  flex-shrink: 0;
+}
+
+.activity-row__menu-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.activity-row__menu-trigger {
+  background: none;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--sand-muted);
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+.activity-row__menu-trigger:hover {
+  background: var(--sand-chip);
+  color: var(--sand-text);
+}
+
+.activity-row__menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 5;
+  background: var(--sand-surface);
+  border: 1px solid var(--sand-border);
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(74, 63, 47, 0.12);
+  min-width: 168px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+}
+
+.activity-row__menu button {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--sand-text);
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.activity-row__menu button:hover {
+  background: var(--sand-chip);
+}
+
+.activity-row__menu-delete {
+  color: var(--sand-error-text);
+}
+
+.activity-row__menu-delete:hover {
+  background: var(--sand-error-bg);
+}
+
+.activities__add-row {
+  width: 100%;
+  background: var(--sand-surface);
+  border: 1.5px dashed var(--sand-border);
+  border-radius: 14px;
+  color: var(--sand-text-soft);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 16px;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.activities__add-row:hover {
+  background: var(--sand-chip);
+  border-color: var(--sand-accent);
+  color: var(--sand-accent);
+}
+
+/* Between phone and tablet width, keep the two columns but let the sidebar
+   shrink a bit before dropping to a single column entirely. */
+@media (max-width: 900px) {
+  .activities__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .about-destination {
+    order: -1;
+  }
+
+  .about-destination__photo {
+    display: none;
+  }
+}
+
+/* Tablet and down: sidebar stacks on top (see Sidebar.css). */
+@media (max-width: 768px) {
+  .activities {
+    padding: 24px 20px 40px;
+    max-width: none;
+  }
+}
+
+/* Phones: header stacks, and each row's time column moves above its name
+   instead of squeezing everything onto one line. */
+@media (max-width: 480px) {
+  .activities__header {
+    flex-direction: column;
+  }
+
+  .activities__header .btn {
+    align-self: stretch;
+  }
+
+  .activities__list {
+    padding: 4px 16px;
+  }
+
+  .activity-row {
+    flex-wrap: wrap;
+  }
+
+  .activity-row__time {
+    width: auto;
+    order: -1;
+    flex-basis: 100%;
+    margin-bottom: 2px;
+  }
+}

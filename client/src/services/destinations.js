@@ -20,6 +20,14 @@ export const createDestination = async (tripId, destination) => {
   return data;
 };
 
+// GET /api/destinations/:id
+export const getDestinationById = async (destinationId) => {
+  const response = await fetch(`${BASE_URL}/destinations/${destinationId}`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "Request failed");
+  return data;
+};
+
 // PATCH /api/destinations/:id
 export const updateDestination = async (destinationId, updates) => {
   const response = await fetch(`${BASE_URL}/destinations/${destinationId}`, {

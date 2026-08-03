@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar.jsx";
 import AddDestinationForm from "../components/AddDestinationForm.jsx";
 import { getDestinationsForTrip, updateDestination, deleteDestination } from "../services/destinations.js";
@@ -276,6 +276,12 @@ const TripDestinations = () => {
                   </div>
 
                   <div className="destinations__actions">
+                    <Link
+                      to={`/trips/${tripId}/destinations/${destination.id}/activities`}
+                      className="btn btn--primary"
+                    >
+                      Activities
+                    </Link>
                     <button type="button" className="btn btn--secondary" onClick={() => startEditing(destination)}>
                       Edit
                     </button>
