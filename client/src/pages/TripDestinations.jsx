@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar.jsx";
 import AddDestinationForm from "../components/AddDestinationForm.jsx";
 import { getDestinationsForTrip, updateDestination, deleteDestination } from "../services/destinations.js";
 import { fetchTripById } from '../services/trips.js';
+import { formatDateRange, toDateInputValue } from "../helpers/tripFormat.js";
 // .page, .btn*, .profile__card, .profile__form, .field* are shared utility
 // classes that happen to live in Profile.css -- reused here rather than
 // duplicated, same reasoning as importing it for .page originally.
@@ -29,17 +30,6 @@ const toRequestBody = (form) => ({
   endDate: form.departureDate || undefined,
   arrivalOrder: form.arrivalOrder || undefined,
 });
-
-// e.g. "Sep 1 – Sep 20, 2026"
-const formatTripDateRange = (startDate, endDate) => {
-  const shortDate = { month: "short", day: "numeric" };
-  const start = startDate ? new Date(startDate).toLocaleDateString(undefined, shortDate) : null;
-  const end = endDate
-    ? new Date(endDate).toLocaleDateString(undefined, { ...shortDate, year: "numeric" })
-    : null;
-  if (start && end) return `${start} – ${end}`;
-  return start || end || null;
-};
 
 const TripDestinations = () => {
   const { tripId } = useParams();
@@ -90,8 +80,8 @@ const TripDestinations = () => {
     setEditForm({
       city: destination.city,
       country: destination.country,
-      arrivalDate: destination.start_date ? destination.start_date.slice(0, 10) : "",
-      departureDate: destination.end_date ? destination.end_date.slice(0, 10) : "",
+      arrivalDate: toDateInputValue(destination.start_date),
+      departureDate: toDateInputValue(destination.end_date),
       arrivalOrder: destination.arrival_order ?? "",
     });
   };
@@ -173,9 +163,7 @@ const TripDestinations = () => {
       <main className="destinations">
         <header className="destinations__trip-header">
           <h1>{trip.title}</h1>
-          {formatTripDateRange(trip.start_date, trip.end_date) && (
-            <p className="profile__subtitle">{formatTripDateRange(trip.start_date, trip.end_date)}</p>
-          )}
+          <p className="profile__subtitle">{formatDateRange(trip.start_date, trip.end_date)}</p>
         </header>
 
         <div className="destinations__header">
@@ -284,8 +272,7 @@ const TripDestinations = () => {
                   </div>
 
                   <div className="destinations__dates">
-                    {destination.start_date && destination.start_date.slice(0, 10)}
-                    {destination.end_date && ` – ${destination.end_date.slice(0, 10)}`}
+                    {formatDateRange(destination.start_date, destination.end_date)}
                   </div>
 
                   <div className="destinations__actions">
