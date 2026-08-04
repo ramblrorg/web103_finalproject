@@ -8,12 +8,14 @@ import TripDestinations from "./pages/TripDestinations.jsx";
 import Activities from "./pages/Activities.jsx";
 import PackingList from "./pages/PackingList.jsx";
 import TripExpenses from "./pages/TripExpenses.jsx";
+import Itineraries from "./pages/Itineraries.jsx";
 
 const App = () => {
   const element = useRoutes([
     { path: "/", element: <Navigate to="/dashboard" replace /> },
     { path: "/dashboard", element: <Dashboard /> },
     { path: "/profile", element: <Profile /> },
+    { path: "/itinerary", element: <Itineraries /> },
     { path: "/trips", element: <Trips /> },
     { path: "/trips/new", element: <TripForm /> },
     { path: "/trips/:id/edit", element: <TripForm /> },
@@ -26,7 +28,10 @@ const App = () => {
       path: "/trips/:tripId/packing-list",
       element: <PackingList />,
     },
-    { path: "/trips/:tripId/expenses", element: <TripExpenses /> },
+    {
+      path: "/trips/:tripId/expenses",
+      element: <TripExpenses />,
+    },
   ]);
 
   return <div className="app">{element}</div>;
