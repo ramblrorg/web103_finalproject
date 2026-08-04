@@ -11,8 +11,8 @@ const ExpenseSummary = ({ tripId, expenses, summary, trip }) => {
     const COLORS = {
         food: "#d6795c",
         travel: "#7f9d6d",
-        activity: "#5c7fd6",
-        lodging: "#9d5cd6",
+        activity: "#9d5cd6",
+        lodging: "#5c7fd6",
     };
 
     const categoryData = Object.values(
@@ -78,8 +78,10 @@ const ExpenseSummary = ({ tripId, expenses, summary, trip }) => {
                     }}
                 />
                 <Legend
-                    verticalAlign="bottom"
                     iconType="circle"
+                    layout="vertical"
+                    align="right"
+                    verticalAlign="middle"
                 />
             </PieChart>
       </div>
