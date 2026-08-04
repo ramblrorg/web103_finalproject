@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar.jsx";
-import ExpenseForm from "../components/AddExpenseForm.jsx";
-import { getExpensesForTrip, getExpensesSummaryForTrip, createExpense, updateExpense, deleteExpense } from "../services/expenses.js";
+import ExpensesListSection from "../components/ExpensesListSection.jsx"; //to display list of expenses
+import ExpenseSummary from "../components/ExpensesSummary.jsx"; //to display summary + piechart
+import ExpenseForm from "../components/ExpenseItemForm.jsx"; //to add new expense
+import { getExpensesForTrip, getExpensesSummaryForTrip} from "../services/expenses.js";
 import { fetchTripById } from '../services/trips.js';
 import "../css/Profile.css";
 import "../css/Expenses.css";
-
-const emptyForm = { amount_usd: "", category: "", status: "", description: "", spent_at: "" };
-
 
 const TripExpenses = () => {
     const { tripId } = useParams();
@@ -17,38 +17,25 @@ const TripExpenses = () => {
     const [destinations, setDestinations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
     const [showAddForm, setShowAddForm] = useState(false);
-    
-    const [editingId, setEditingId] = useState(null);
-    const [editForm, setEditForm] = useState(emptyForm);
-    const [editError, setEditError] = useState(null);
-    const [isSavingEdit, setIsSavingEdit] = useState(false);
-    
-    const [deleteError, setDeleteError] = useState(null);
-    const [deletingId, setDeletingId] = useState(null);
-
     const [expenses, setExpenses] = useState([]);
+    const [summary, setSummary] = useState(null);
 
-    //
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const tripData = await fetchTripById(tripId);
-                setTrip(tripData);
-                setDestinations(tripData.destinations || []);
-                const expensesData = await getExpensesForTrip(tripId);
-                setExpenses(expensesData);
-            } catch (err) {
-                setError(err.message);
-            }
-            setLoading(false);
-        };
-        fetchData();
-    }, [tripId]);
+        const loadPage = async () => {
+                try {
+                    const tripData = await fetchTripById(tripId);
+                    setTrip(tripData);
+                    await loadData();
+                } catch (err) {
+                    setError(err.message);
+                }
+                setLoading(false);
+            };
+            loadPage();
+        }, [tripId]);
 
     //get expenses summary
-    const [summary, setSummary] = useState(null);
     useEffect(() => {
         const fetchSummary = async () => {
             try {
@@ -63,52 +50,84 @@ const TripExpenses = () => {
     }, [tripId]);
     
 
+    const loadData = async () => {
+        try {
+            const [expensesData, summaryData] = await Promise.all([
+                getExpensesForTrip(tripId),
+                getExpensesSummaryForTrip(tripId),
+            ]);
+
+            setExpenses(expensesData);
+            setSummary(summaryData);
+
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
+    const spent = Number(summary?.total_expenses ?? 0);
+    const budget = Number(trip?.budget ?? 0);
+    const percent = trip && trip.budget ? Math.min((spent / budget) * 100, 100) : 0;
+
+    if (loading) {
+        return (
+        <section className="expenses-section">
+            <div className="expenses-section__heading">
+            <span className="expenses-section__eyebrow">Travel Budget</span>
+            <h2>Expenses</h2>
+            </div>
+            <div className="expenses-state-card expenses-state-card--loading">
+            <span className="expenses-spinner" aria-hidden="true" />
+            <p>Loading your expenses…</p>
+            </div>
+        </section>
+        );
+    }
+
     return (
         <div className = "page">
             <Sidebar />
-
-            <main className = "expenses">
+            <main className = "expenses-page">
                 <header className="expenses-header">
-                    <h2>Expenses</h2>
-                </header>
+                    <Link to={`/trips/${tripId}`} className="packing-page__back">
+                              ← Back to Trip Dashboard
+                    </Link>
+                    <div className="expenses-header__inner"> 
+                        <div className="expenses-header__title"> 
+                            <h2>Expenses</h2>
+                            <p>Keep track of your trip expenses and stay within your budget.</p>
+                        </div>
+                    
+                        <div className="expenses-header__exchange-rate">
+                            <h3> Exchange Rate </h3>
+                            <p> 1 USD = N/A </p>
+                        </div>
+                    </div>
 
-                <div className="expenses-summary">
-                    <h2> Budget Overview </h2>
-                    <div className="summary-item">
-                        <h3> Total Budget </h3>
-                        <p> {summary?.total_budget || '$0.00'} </p>
-                    </div>
-                    <div className="summary-item">
-                        <h3> Total Spent </h3>
-                        <p> {summary?.total_spent || '$0.00'} </p>
-                    </div>
+                </header>
+            
+            <div className="expenses_budget_spending">
+                <div className = "summary-chart-container">
+                    {summary && <ExpenseSummary tripId={tripId} expenses={expenses} summary={summary} trip={trip} />}
                 </div>
 
-                <div className="expenses-list">
-                    <h2> Recent Expenses </h2>
-                    {expenses.map((expense) => (
-                        <div key={expense.id} className="expense-item">
-                            <p>{expense.description? expense.description : ''}</p>
-                            <p>{expense.amount_usd}</p>
-                            <p>{expense.category}</p>
-                            <p>{expense.status}</p>
-                        </div>
-                    ))}
-                    <div className="expense-item">
-                        <p> See all expenses </p>
-                    </div>
+                <ExpensesListSection
+                    tripId={tripId}
+                    expenses={expenses}
+                    setExpenses={setExpenses}
+                    onUpdated={loadData}
+                />
                 </div>
                 {showAddForm && (
                     <ExpenseForm
                         tripId={tripId}
-                        onCreated={(newExpense) => {
-                            setExpenses((prevExpenses) => [...prevExpenses, newExpense]);
+                        onSaved={async (newExpense) => {
+                            await loadData();
                             setShowAddForm(false);
                         }}
                         onCancel={() => setShowAddForm(false)}
                     />
                 )}
-
                 <button type="button" className="btn btn--primary" onClick={() => setShowAddForm(true)}>
                     + Add Expense
                 </button>

@@ -32,10 +32,10 @@ const TripQuickActions = ({ tripId }) => {
           </span>
         </button>
 
-        <div
-          className="quick-actions__item quick-actions__item--disabled"
-          aria-disabled="true"
-          title="Expenses is coming soon"
+        <button
+          type="button"
+          className="quick-actions__item"
+          onClick={() => navigate(`/trips/${tripId}/expenses`)}
         >
           <span className="quick-actions__icon quick-actions__icon--expenses">
             <BudgetIcon />
@@ -43,11 +43,13 @@ const TripQuickActions = ({ tripId }) => {
           <span className="quick-actions__text">
             <span className="quick-actions__title">
               Expenses
-              <span className="quick-actions__badge">Coming Soon</span>
             </span>
             <span className="quick-actions__subtitle">Track spending and budget</span>
           </span>
-        </div>
+          <span className="quick-actions__chevron" aria-hidden="true">
+            ›
+          </span>
+        </button>
       </div>
     </aside>
   );

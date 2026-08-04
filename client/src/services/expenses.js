@@ -13,7 +13,7 @@ export const getExpensesSummaryForTrip = async (tripId) => {
   const response = await fetch(`${BASE_URL}/trips/${tripId}/expenses/summary`);
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || "Request failed");
-  return data;
+  return data[0];
 }
 
 // POST /api/trips/:tripId/expenses
