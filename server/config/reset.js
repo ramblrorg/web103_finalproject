@@ -119,8 +119,12 @@ const createDestinationsTable = async () => {
   }
 };
 
+// Down: DROP TABLE IF EXISTS expenses CASCADE;
+// Up: CREATE TABLE expenses (...) below.
+// CASCADE here for the same reason as users/trips/destinations above: keeps
+// reset.js resilient regardless of what state the shared dev database is in.
 const createExpensesTableQuery = `
-  DROP TABLE IF EXISTS expenses;
+  DROP TABLE IF EXISTS expenses CASCADE;
   CREATE TABLE expenses (
     id SERIAL PRIMARY KEY,
     trip_id INTEGER NOT NULL REFERENCES trips(id) ON DELETE CASCADE,
@@ -144,8 +148,12 @@ const createExpensesTable = async () => {
   }
 };
 
+// Down: DROP TABLE IF EXISTS packing_list CASCADE;
+// Up: CREATE TABLE packing_list (...) below.
+// CASCADE here for the same reason as users/trips/destinations above: keeps
+// reset.js resilient regardless of what state the shared dev database is in.
 const createPackingListTableQuery = `
-  DROP TABLE IF EXISTS packing_list;
+  DROP TABLE IF EXISTS packing_list CASCADE;
   CREATE TABLE packing_list (
     id SERIAL PRIMARY KEY,
     trip_id INTEGER NOT NULL REFERENCES trips(id) ON DELETE CASCADE,

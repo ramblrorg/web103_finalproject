@@ -4,6 +4,10 @@ import { getCurrentUserId } from "../helpers/currentUser.js";
 import { getOwnedTrip } from "../helpers/tripOwnership.js";
 import { getOwnedExpenses } from "../helpers/expensesOwnership.js";
 
+// must match the CHECK constraints on the expenses table in reset.js
+const VALID_CATEGORIES = ["lodging", "travel", "activity", "food"];
+const VALID_STATUSES = ["estimated", "actual"];
+
 // GET /api/trips/:tripId/expenses — list all expenses for a trip
 const getAllExpenses = async (req, res) => {
   const { tripId } = req.params;
@@ -83,8 +87,13 @@ const createExpense = async (req, res) => {
   if (!isValidId(tripId)) return res.status(400).json({ error: "Invalid trip id" });
   if (!amount_usd) return res.status(400).json({ error: "Amount in USD is required" });
   if (!category) return res.status(400).json({ error: "Category is required" });
-  
-  
+  if (!VALID_CATEGORIES.includes(category)) {
+    return res.status(400).json({ error: `Category must be one of: ${VALID_CATEGORIES.join(", ")}` });
+  }
+  if (status && !VALID_STATUSES.includes(status)) {
+    return res.status(400).json({ error: `Status must be one of: ${VALID_STATUSES.join(", ")}` });
+  }
+
   try {
     const userId = await getCurrentUserId();
     if (!userId) return res.status(404).json({ error: "User not found" });
@@ -127,6 +136,13 @@ const updateExpense = async (req, res) => {
   if (!amount_usd) return res.status(400).json({ error: "Amount in USD is required" });
   if (!category) return res.status(400).json({ error: "Category is required" });
   if (!status) return res.status(400).json({ error: "Status is required" });
+  if (!VALID_CATEGORIES.includes(category)) {
+    return res.status(400).json({ error: `Category must be one of: ${VALID_CATEGORIES.join(", ")}` });
+  }
+  if (!VALID_STATUSES.includes(status)) {
+    return res.status(400).json({ error: `Status must be one of: ${VALID_STATUSES.join(", ")}` });
+  }
+
   try {
     const userId = await getCurrentUserId();
     if (!userId) return res.status(404).json({ error: "User not found" });
