@@ -1,4 +1,6 @@
-const BASE_URL = "/api";
+const BASE_URL = import.meta.env.PROD
+  ? "https://ramblr-r5x1.onrender.com"
+  : "/api";
 
 // GET /api/trips/:tripId/expenses
 export const getExpensesForTrip = async (tripId) => {
@@ -14,7 +16,7 @@ export const getExpensesSummaryForTrip = async (tripId) => {
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || "Request failed");
   return data[0];
-}
+};
 
 // POST /api/trips/:tripId/expenses
 export const createExpense = async (tripId, expense) => {
@@ -39,7 +41,6 @@ export const updateExpense = async (expenseId, updates) => {
   if (!response.ok) throw new Error(data.error || "Request failed");
   return data;
 };
-
 
 // DELETE /api/expenses/:id
 export const deleteExpense = async (expenseId) => {

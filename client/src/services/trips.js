@@ -1,7 +1,9 @@
 // Thin wrapper around the Trips API (server/routes/trips.js — T2).
 // No auth yet -- every request resolves against the current seeded user.
 
-const BASE_URL = "/api/trips";
+const BASE_URL = import.meta.env.PROD
+  ? "https://ramblr-r5x1.onrender.com/trips"
+  : "/api/trips";
 
 const parseJsonSafe = async (res) => {
   try {
@@ -36,7 +38,13 @@ export const fetchTripById = async (id) => {
 };
 
 // POST /api/trips
-export const createTrip = async ({ title, startDate, endDate, budget, imageUrl }) => {
+export const createTrip = async ({
+  title,
+  startDate,
+  endDate,
+  budget,
+  imageUrl,
+}) => {
   const res = await fetch(BASE_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -52,7 +60,10 @@ export const createTrip = async ({ title, startDate, endDate, budget, imageUrl }
 };
 
 // PATCH /api/trips/:id
-export const updateTrip = async (id, { title, startDate, endDate, budget, imageUrl }) => {
+export const updateTrip = async (
+  id,
+  { title, startDate, endDate, budget, imageUrl },
+) => {
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
@@ -67,7 +78,6 @@ export const updateTrip = async (id, { title, startDate, endDate, budget, imageU
   return body;
 };
 
-
 export const deleteTrip = async (id) => {
   const res = await fetch(`${BASE_URL}/${id}`, { method: "DELETE" });
 
@@ -76,4 +86,3 @@ export const deleteTrip = async (id) => {
     throw new Error(body.error || "Failed to delete trip.");
   }
 };
-
