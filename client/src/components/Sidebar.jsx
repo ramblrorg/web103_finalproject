@@ -16,7 +16,7 @@ import "../css/Sidebar.css";
 const NAV_ITEMS = [
   { label: "Dashboard", path: "/dashboard", Icon: DashboardIcon },
   { label: "My Trips", path: "/trips", Icon: TripsIcon },
-  { label: "Itinerary", path: "/itinerary", Icon: ItineraryIcon },
+  { label: "Itineraries", path: "/itinerary", Icon: ItineraryIcon },
   { label: "Budget", path: "/budget", Icon: BudgetIcon },
   { label: "Profile", path: "/profile", Icon: ProfileIcon },
 ];
