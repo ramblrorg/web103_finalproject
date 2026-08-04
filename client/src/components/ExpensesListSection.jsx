@@ -4,15 +4,19 @@ import ExpenseForm from "./ExpenseItemForm.jsx";
 import { deleteExpense} from "../services/expenses.js";
 import "../css/Expenses.css";
 
-const ExpensesListSection = ({ tripId, setExpenses, expenses, onUpdated }) => {
+const ExpensesListSection = ({ tripId, setExpenses, expenses, summary, onUpdated }) => {
     const [showAddForm, setShowAddForm] = useState(false);
 
     const [selectedExpense, setSelectedExpense] = useState(null);
     
     const [deleteError, setDeleteError] = useState(null);
-    const [deletingId, setDeletingId] = useState(null);
    
     const handleDelete = async (expense) => {
+
+        if (!window.confirm("Are you sure you want to delete this expense?")) {
+            return;
+        }
+
         try {
             await deleteExpense(expense.id);
 
@@ -26,7 +30,6 @@ const ExpensesListSection = ({ tripId, setExpenses, expenses, onUpdated }) => {
             setDeleteError(err.message);
         }
     };
-
 
     return (
         <div className="expenses-list-container">
@@ -94,6 +97,7 @@ const ExpensesListSection = ({ tripId, setExpenses, expenses, onUpdated }) => {
                     <ExpenseForm
                         tripId={tripId}
                         expense={selectedExpense}
+                        summary={summary}
                         onSaved={async (savedExpense) => {
                             if (selectedExpense) {
                                 setExpenses((prev) =>

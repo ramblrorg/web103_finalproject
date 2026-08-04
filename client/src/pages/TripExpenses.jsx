@@ -12,9 +12,7 @@ import "../css/Expenses.css";
 
 const TripExpenses = () => {
     const { tripId } = useParams();
-    
     const [trip, setTrip] = useState(null);
-    const [destinations, setDestinations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showAddForm, setShowAddForm] = useState(false);
@@ -41,6 +39,7 @@ const TripExpenses = () => {
             try {
                 const summaryData = await getExpensesSummaryForTrip(tripId);
                 setSummary(summaryData);
+                console.log("Summary response:", summaryData);
             }
             catch (err) {
                 setError(err.message);
@@ -55,11 +54,10 @@ const TripExpenses = () => {
             const [expensesData, summaryData] = await Promise.all([
                 getExpensesForTrip(tripId),
                 getExpensesSummaryForTrip(tripId),
-            ]);
+        ]);
 
             setExpenses(expensesData);
             setSummary(summaryData);
-
         } catch (err) {
             setError(err.message);
         }
@@ -115,12 +113,14 @@ const TripExpenses = () => {
                     tripId={tripId}
                     expenses={expenses}
                     setExpenses={setExpenses}
+                    summary={summary}
                     onUpdated={loadData}
                 />
                 </div>
                 {showAddForm && (
                     <ExpenseForm
                         tripId={tripId}
+                        summary={summary}
                         onSaved={async (newExpense) => {
                             await loadData();
                             setShowAddForm(false);

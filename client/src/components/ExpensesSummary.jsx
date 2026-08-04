@@ -47,7 +47,7 @@ const ExpenseSummary = ({ tripId, expenses, summary, trip }) => {
         <div className="budget-progress-card__bar-wrap">
             <div className="budget-progress-card__bar-labels">
                 <span>Budget spent</span>
-                <span>{100 - percent.toFixed(1)}% left</span>
+                <span>{(100 - percent).toFixed(1)}% left</span>
             </div>
             <div className="budget__progress-track" aria-label={`${percent}% spent`}>
                 <div className={`budget__progress-fill${percent === 100 ? " budget__progress-fill--complete" : ""}`} style={{ width: `${percent}%` }} />

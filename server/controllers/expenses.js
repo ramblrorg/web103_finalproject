@@ -46,8 +46,8 @@ const getExpensesSummary = async (req, res) => {
 
     const { rows } = await pool.query(
       `SELECT 
-      SUM(amount_usd) AS total_expenses,
-      (t.budget - SUM(amount_usd)) AS remaining_budget
+      COALESCE(SUM(e.amount_usd), 0) AS total_expenses,
+      (t.budget - COALESCE(SUM(e.amount_usd), 0)) AS remaining_budget
       FROM trips t
       LEFT JOIN expenses e ON t.id = e.trip_id AND e.status = 'actual'
       WHERE t.id = $1

@@ -3,7 +3,7 @@ import { createExpense, updateExpense } from "../services/expenses.js";
 import "../css/Profile.css";
 import "../css/AddDestinationForm.css";
 
-const ExpenseForm = ({ tripId, expense, onSaved, onCancel }) => {
+const ExpenseForm = ({ tripId, expense, summary, onSaved, onCancel }) => {
   const isEditing = Boolean(expense);
 
   const [form, setForm] = useState({
@@ -45,6 +45,19 @@ const ExpenseForm = ({ tripId, expense, onSaved, onCancel }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+
+    const remainingBudget = Number(summary.remaining_budget);
+    const newAmount = Number(form.amount_usd);
+    console.log("Remaining Budget:", remainingBudget);
+    if (remainingBudget - newAmount < 0) {
+      setError("Adding this expense exceeds the trip budget.");
+      return;
+    }
+
+    if (newAmount <= 0) {
+      setError("Amount must be greater than zero.");
+      return;
+    }
 
     try {
       setIsSubmitting(true);
