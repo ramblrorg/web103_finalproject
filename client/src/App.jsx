@@ -1,5 +1,6 @@
 import React from "react";
 import { Navigate, useRoutes } from "react-router-dom";
+import Dashboard from "./pages/Dashboard.jsx";
 import Profile from "./pages/Profile.jsx";
 import Trips from "./pages/Trips.jsx";
 import TripForm from "./pages/TripForm.jsx";
@@ -10,7 +11,8 @@ import TripExpenses from "./pages/TripExpenses.jsx";
 
 const App = () => {
   const element = useRoutes([
-    { path: "/", element: <Navigate to="/trips" replace /> },
+    { path: "/", element: <Navigate to="/dashboard" replace /> },
+    { path: "/dashboard", element: <Dashboard /> },
     { path: "/profile", element: <Profile /> },
     { path: "/trips", element: <Trips /> },
     { path: "/trips/new", element: <TripForm /> },

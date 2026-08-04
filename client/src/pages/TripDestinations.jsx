@@ -13,32 +13,13 @@ import {
   formatDateRange,
   toDateInputValue,
 } from "../helpers/tripFormat.js";
+import {
+  emptyDestinationForm,
+  getDateOrderError,
+  toDestinationRequestBody,
+} from "../helpers/destinationForm.js";
 import "../css/Profile.css";
 import "../css/Destinations.css";
-
-const getDateOrderError = (arrivalDate, departureDate) => {
-  if (arrivalDate && departureDate && departureDate < arrivalDate) {
-    return "Departure date cannot be before arrival date.";
-  }
-
-  return null;
-};
-
-const emptyForm = {
-  city: "",
-  country: "",
-  arrivalDate: "",
-  departureDate: "",
-  arrivalOrder: "",
-};
-
-const toRequestBody = (form) => ({
-  city: form.city,
-  country: form.country,
-  startDate: form.arrivalDate || undefined,
-  endDate: form.departureDate || undefined,
-  arrivalOrder: form.arrivalOrder || undefined,
-});
 
 const TripDestinations = () => {
   const { tripId } = useParams();
@@ -52,7 +33,7 @@ const TripDestinations = () => {
   const [showAddForm, setShowAddForm] = useState(false);
 
   const [editingId, setEditingId] = useState(null);
-  const [editForm, setEditForm] = useState(emptyForm);
+  const [editForm, setEditForm] = useState(emptyDestinationForm);
   const [editError, setEditError] = useState(null);
   const [isSavingEdit, setIsSavingEdit] = useState(false);
 
@@ -101,7 +82,7 @@ const TripDestinations = () => {
 
   const cancelEditing = () => {
     setEditingId(null);
-    setEditForm(emptyForm);
+    setEditForm(emptyDestinationForm);
     setEditError(null);
   };
 
@@ -121,7 +102,7 @@ const TripDestinations = () => {
 
     try {
       setIsSavingEdit(true);
-      await updateDestination(editingId, toRequestBody(editForm));
+      await updateDestination(editingId, toDestinationRequestBody(editForm));
       cancelEditing();
       await loadData();
     } catch (err) {
@@ -275,6 +256,8 @@ const TripDestinations = () => {
                           <input
                             type="date"
                             value={editForm.arrivalDate}
+                            min={toDateInputValue(trip.start_date)}
+                            max={toDateInputValue(trip.end_date)}
                             onChange={(event) =>
                               setEditForm({
                                 ...editForm,
@@ -290,6 +273,8 @@ const TripDestinations = () => {
                           <input
                             type="date"
                             value={editForm.departureDate}
+                            min={toDateInputValue(trip.start_date)}
+                            max={toDateInputValue(trip.end_date)}
                             onChange={(event) =>
                               setEditForm({
                                 ...editForm,
@@ -416,6 +401,7 @@ const TripDestinations = () => {
       {showAddForm && (
         <AddDestinationForm
           tripId={tripId}
+          trip={trip}
           onCreated={handleDestinationCreated}
           onCancel={() => setShowAddForm(false)}
         />

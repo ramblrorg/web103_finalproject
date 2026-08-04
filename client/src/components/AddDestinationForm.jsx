@@ -1,22 +1,16 @@
 import { useState } from "react";
 import { createDestination } from "../services/destinations.js";
+import { toDateInputValue } from "../helpers/tripFormat.js";
+import {
+  emptyDestinationForm,
+  getDateOrderError,
+  toDestinationRequestBody,
+} from "../helpers/destinationForm.js";
 import "../css/Profile.css";
 import "../css/AddDestinationForm.css";
 
-// arrivalDate/departureDate here are plain "YYYY-MM-DD" strings from <input type="date">,
-// so this cheap string comparison is enough to catch the obvious case; the
-// trip-date-range check is left to the backend's existing validation.
-const getDateOrderError = (arrivalDate, departureDate) => {
-  if (arrivalDate && departureDate && departureDate < arrivalDate) {
-    return "Departure date cannot be before arrival date.";
-  }
-  return null;
-};
-
-const emptyForm = { city: "", country: "", arrivalDate: "", departureDate: "", arrivalOrder: "" };
-
-const AddDestinationForm = ({ tripId, onCreated, onCancel }) => {
-  const [form, setForm] = useState(emptyForm);
+const AddDestinationForm = ({ tripId, trip, onCreated, onCancel }) => {
+  const [form, setForm] = useState(emptyDestinationForm);
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -29,13 +23,7 @@ const AddDestinationForm = ({ tripId, onCreated, onCancel }) => {
 
     try {
       setIsSubmitting(true);
-      await createDestination(tripId, {
-        city: form.city,
-        country: form.country,
-        startDate: form.arrivalDate || undefined,
-        endDate: form.departureDate || undefined,
-        arrivalOrder: form.arrivalOrder || undefined,
-      });
+      await createDestination(tripId, toDestinationRequestBody(form));
       onCreated();
     } catch (err) {
       setError(err.message);
@@ -88,6 +76,8 @@ const AddDestinationForm = ({ tripId, onCreated, onCancel }) => {
             <input
               type="date"
               value={form.arrivalDate}
+              min={toDateInputValue(trip?.start_date)}
+              max={toDateInputValue(trip?.end_date)}
               onChange={(e) => setForm({ ...form, arrivalDate: e.target.value })}
               disabled={isSubmitting}
             />
@@ -98,6 +88,8 @@ const AddDestinationForm = ({ tripId, onCreated, onCancel }) => {
             <input
               type="date"
               value={form.departureDate}
+              min={toDateInputValue(trip?.start_date)}
+              max={toDateInputValue(trip?.end_date)}
               onChange={(e) => setForm({ ...form, departureDate: e.target.value })}
               disabled={isSubmitting}
             />
