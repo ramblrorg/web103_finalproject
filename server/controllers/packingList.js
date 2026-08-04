@@ -121,6 +121,7 @@ const createPackingListItem = async (req, res) => {
 const updatePackingListItem = async (req, res) => {
   const { id } = req.params;
   const { name, is_packed} = req.body;
+  if (!isValidId(id)) return res.status(400).json({ error: "Invalid packing list item id" });
 
   //try catch statement where we will update item in table, with characteristics of name, is_packed, is_auto_generated
   try {
