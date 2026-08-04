@@ -3,57 +3,73 @@ import {
   DashboardIcon,
   TripsIcon,
   ItineraryIcon,
-  BudgetIcon,
   ProfileIcon,
   LogoutIcon,
 } from "../assets/icons/index.js";
 import "../css/Sidebar.css";
 
-// Packing List isn't included here: it's always scoped to a specific trip
-// (route is /trips/:tripId/packing-list), so a bare top-level link has
-// nowhere real to go. It's reached from each Trip Dashboard instead, the
-// same way Activities is.
 const NAV_ITEMS = [
   { label: "Dashboard", path: "/dashboard", Icon: DashboardIcon },
   { label: "My Trips", path: "/trips", Icon: TripsIcon },
   { label: "Itineraries", path: "/itinerary", Icon: ItineraryIcon },
-  { label: "Budget", path: "/budget", Icon: BudgetIcon },
   { label: "Profile", path: "/profile", Icon: ProfileIcon },
 ];
 
 const Sidebar = () => {
   const { pathname } = useLocation();
 
+  const isActive = (path) => {
+    if (path === "/trips") {
+      return pathname === "/trips" || pathname.startsWith("/trips/");
+    }
+
+    return pathname === path;
+  };
+
   return (
     <aside className="sidebar">
-      <div className="sidebar__brand">
-        <span className="sidebar__brand-mark" aria-hidden="true">
-          ✈
-        </span>
+      <Link
+        to="/dashboard"
+        className="sidebar__brand"
+        aria-label="Go to Ramblr dashboard"
+      >
+        <span
+          className="sidebar__brand-logo"
+          aria-hidden="true"
+        />
         <span className="sidebar__brand-name">Ramblr</span>
-      </div>
+      </Link>
 
-      <nav className="sidebar__nav">
+      <nav className="sidebar__nav" aria-label="Primary navigation">
         {NAV_ITEMS.map(({ label, path, Icon }) => (
           <Link
             key={path}
             to={path}
-            className={`sidebar__link${pathname === path ? " sidebar__link--active" : ""}`}
+            className={`sidebar__link${
+              isActive(path) ? " sidebar__link--active" : ""
+            }`}
           >
-            <span className="sidebar__icon">
+            <span className="sidebar__icon" aria-hidden="true">
               <Icon />
             </span>
-            {label}
+            <span>{label}</span>
           </Link>
         ))}
       </nav>
 
-      <button type="button" className="sidebar__link sidebar__logout">
-        <span className="sidebar__icon">
-          <LogoutIcon />
-        </span>
-        Logout
-      </button>
+      <div className="sidebar__footer">
+        <p className="sidebar__message">
+          <span className="sidebar__message-top">Travel well.</span>
+          <span className="sidebar__message-bottom">Ramble often.</span>
+        </p>
+
+        <button type="button" className="sidebar__link sidebar__logout">
+          <span className="sidebar__icon" aria-hidden="true">
+            <LogoutIcon />
+          </span>
+          <span>Logout</span>
+        </button>
+      </div>
     </aside>
   );
 };
