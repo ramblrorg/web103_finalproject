@@ -31,8 +31,6 @@ const ExpensesListSection = ({ tripId, setExpenses, expenses, summary, onUpdated
         }
     };
 
-    console.log(summary);
-
     return (
         <div className="expenses-list-container">
             <div className="expenses-list">   

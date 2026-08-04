@@ -13,8 +13,6 @@ const ExpenseForm = ({ tripId, expense, summary, onSaved, onCancel }) => {
     status: expense?.status ?? "",
   });
 
-  console.log("ExpenseForm summary:", summary);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
@@ -50,7 +48,7 @@ const ExpenseForm = ({ tripId, expense, summary, onSaved, onCancel }) => {
 
     const remainingBudget = Number(summary.remaining_budget);
     const newAmount = Number(form.amount_usd);
-
+    console.log("Remaining Budget:", remainingBudget);
     if (remainingBudget - newAmount < 0) {
       setError("Adding this expense exceeds the trip budget.");
       return;
