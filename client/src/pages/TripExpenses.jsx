@@ -115,12 +115,14 @@ const TripExpenses = () => {
                     tripId={tripId}
                     expenses={expenses}
                     setExpenses={setExpenses}
+                    summary={summary}
                     onUpdated={loadData}
                 />
                 </div>
                 {showAddForm && (
                     <ExpenseForm
                         tripId={tripId}
+                        summary={summary}
                         onSaved={async (newExpense) => {
                             await loadData();
                             setShowAddForm(false);
