@@ -7,6 +7,7 @@ import TripForm from "./pages/TripForm.jsx";
 import TripDestinations from "./pages/TripDestinations.jsx";
 import Activities from "./pages/Activities.jsx";
 import PackingList from "./pages/PackingList.jsx";
+import TripExpenses from "./pages/TripExpenses.jsx";
 
 const App = () => {
   const element = useRoutes([
@@ -21,7 +22,11 @@ const App = () => {
       path: "/trips/:tripId/destinations/:destinationId/activities",
       element: <Activities />,
     },
-    { path: "/trips/:tripId/packing-list", element: <PackingList /> },
+    {
+      path: "/trips/:tripId/packing-list",
+      element: <PackingList />,
+    },
+    { path: "/trips/:tripId/expenses", element: <TripExpenses /> },
   ]);
 
   return <div className="app">{element}</div>;

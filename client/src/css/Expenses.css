@@ -1,0 +1,374 @@
+.expenses-page {
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 32px 48px;
+    background: transparent;
+}
+
+h2{  
+    letter-spacing: -0.025em;
+}
+
+h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    letter-spacing: -0.025em;
+}
+
+.expenses-header {
+    gap: 20px;
+    margin-bottom: 5px;
+    padding: 0 2px;
+}
+
+.expenses-header h2 {
+    margin: 4px 0 5px;
+    color: #3f3428;
+    font-size: clamp(1.45rem, 3vw, 1.85rem);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+}
+
+.expenses-header p{
+    margin: 0;
+    color: #817463;
+    font-size: 0.86rem;
+    line-height: 1.5;
+}
+
+.expenses-summary {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 22px;
+    border-radius: 18px;
+    background: rgba(255, 253, 249, 0.92);
+}
+
+.expenses-summary h2 {
+    margin: 0;
+    font-size: 1.6rem;
+}
+
+.expenses-summary h3 {
+    margin: 4px 0 5px;
+    color: #3f3428;
+}
+
+.budget-spent-summary-card {
+    display: flex;
+    align-items: center;
+    gap: 18px 28px;
+    margin-bottom: 17px;
+    padding: 20px 22px;
+    border-radius: 18px;
+    margin: 0 2px 0 2px;
+    background: rgba(255, 253, 249, 0.92);
+    box-shadow: 0 9px 28px rgba(80, 60, 43, 0.065);
+}
+
+.budget-spent-summary-card p{
+    margin: 0;
+    color: #817463;
+    font-size: 0.86rem;
+    line-height: 1.5;
+}
+
+.expenses-summary__chart {
+    border-radius: 18px;
+    background: rgba(255, 253, 249, 0.92);
+    box-shadow: 0 9px 28px rgba(80, 60, 43, 0.065);
+}
+
+.summary-item {
+    flex: 1;
+}
+
+.expenses-list-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 22px;
+    border-radius: 18px;
+    background: rgba(255, 253, 249, 0.92);
+}
+.expenses-list__header {
+    margin-bottom: 10px;
+}
+
+.expenses-list__header h2 {
+    margin: 0;
+    font-size: 1.6rem;
+}
+
+.expenses-list__header p {
+    margin-top: 4px;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.expenses-header__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.expenses-header__exchange-rate {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 10px;
+    border-radius: 18px;
+    color: #085937;
+    border: 1px solid #085937;
+    background: #e8f8ef;
+}
+
+.expenses-header__exchange-rate h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.expenses-header__exchange-rate p {
+    margin: 4px 0 0;
+    font-size: 0.9rem;
+}
+
+.expense-card {
+    background: white;
+    border: 1px solid #ececec;
+    border-radius: 18px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: all 0.2s ease;
+}
+
+.expense-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,.08);
+}
+
+.expense-card h2 {
+    margin: 0;
+    font-size: 1.6rem;
+}
+
+.expense-card p {
+    margin: 0;
+    color: #817463;
+    font-size: 0.86rem;
+    line-height: 1.5;
+}
+
+.expense-card__category {
+    display: inline-block;
+    width: fit-content;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: .8rem;
+    font-weight: 600;
+    border: 1px solid;
+}
+
+.expense-card__category.food {
+    background: #fff4e6;
+    border-color: #f4a261;
+    color: #c96b00;
+}
+
+.expense-card__category.travel {
+    background: #e8f8ef;
+    border-color: #38b000;
+    color: #2b7a0b;
+}
+
+.expense-card__category.lodging {
+    background: #eef4ff;
+    border-color: #4f83ff;
+    color: #2952cc;
+}
+
+.expense-card__category.activity {
+    background: #f3e8ff;
+    border-color: #9333ea;
+    color: #6b21a8;
+}
+
+
+.expenses_budget_spending {
+    display: flex;
+    gap: 2rem;
+    align-items: stretch;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.summary-chart-container {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+}
+
+.expenses-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.expense-card {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-direction: row;
+    align-items: center;
+}
+
+.expense-card__info {
+    flex: 1;
+}
+.expense-card__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+.expense-card__actions {
+    display: flex;
+    gap: 6px;
+}
+
+.budget-progress {
+    width: 100%;
+    height: 18px;
+    background: #e5e5e5;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.budget-progress-card__bar-wrap {
+  grid-column: 1 / -1;
+}
+
+.budget-progress-card__bar-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 9px;
+  color: var(--packing-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.budget__progress-track {
+  height: 11px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #f0e5dc;
+}
+
+.budget__progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #f0ab87, #d6795c);
+  box-shadow: 0 0 16px rgba(213, 121, 92, 0.28);
+  transition: width 0.45s cubic-bezier(0.34, 1.3, 0.64, 1);
+}
+
+.budget__progress-fill--complete {
+  background: linear-gradient(90deg, #a9bd91, #7f9d6d);
+}
+
+/* Loading */
+.expenses-section {
+  position: relative;
+  margin-top: 34px;
+  padding-bottom: 28px;
+}
+
+.expenses-section *,
+.expenses-section *::before,
+.expenses-section *::after {
+  box-sizing: border-box;
+}
+
+.expenses-section__heading {
+  margin-bottom: 18px;
+}
+
+.expenses-section__heading h2,
+.expenses-hero h2 {
+  margin: 4px 0 0;
+  color: var(--packing-ink);
+  font-size: clamp(1.8rem, 4vw, 2.55rem);
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+.expenses-section__eyebrow,
+.expenses-progress-card__kicker,
+.expenses-empty-card__eyebrow,
+.expenses-modal__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #a55f49;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 650px) {
+  .expenses-section {
+    margin-top: 26px;
+  }
+}
+
+.expenses-state-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: clamp(38px, 7vw, 70px) 24px;
+  border: 1px solid rgba(110, 87, 65, 0.11);
+  border-radius: 26px;
+  background: linear-gradient(180deg, #fffdf9, #fff8f2);
+  box-shadow: 0 16px 45px rgba(82, 61, 44, 0.08);
+}
+
+.expenses-state-card__icon {
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  color: #9f4934;
+  background: #fff0ea;
+  font-weight: 900;
+}
+
+.expenses-state-card--error .packing-btn {
+  margin-top: 18px;
+}
+
+.expenses-state-card--loading {
+  min-height: 180px;
+  justify-content: center;
+}
+.expenses-spinner {
+  width: 35px;
+  height: 35px;
+  margin-bottom: 14px;
+  border: 3px solid #f0ddd2;
+  border-top-color: #d67b5d;
+  border-radius: 50%;
+  animation: packing-spin 0.75s linear infinite;
+}
