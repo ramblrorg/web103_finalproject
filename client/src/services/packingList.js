@@ -3,7 +3,9 @@
 // actual backend routes, which use "packing-list" rather than the
 // "packing-items" naming in the issue description.
 
-const BASE_URL = "/api";
+const BASE_URL = import.meta.env.PROD
+  ? "https://ramblr-r5x1.onrender.com"
+  : "/api";
 
 const parseJsonSafe = async (res) => {
   try {
@@ -57,7 +59,9 @@ export const updatePackingListItem = async (itemId, updates) => {
 
 // DELETE /api/packing-list/:id
 export const deletePackingListItem = async (itemId) => {
-  const res = await fetch(`${BASE_URL}/packing-list/${itemId}`, { method: "DELETE" });
+  const res = await fetch(`${BASE_URL}/packing-list/${itemId}`, {
+    method: "DELETE",
+  });
   if (!res.ok) {
     const data = await parseJsonSafe(res);
     throw new Error(data.error || "Failed to delete item.");

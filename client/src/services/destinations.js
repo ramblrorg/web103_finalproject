@@ -1,4 +1,6 @@
-const BASE_URL = "/api";
+const BASE_URL = import.meta.env.PROD
+  ? "https://ramblr-r5x1.onrender.com"
+  : "/api";
 
 // GET /api/trips/:tripId/destinations
 export const getDestinationsForTrip = async (tripId) => {

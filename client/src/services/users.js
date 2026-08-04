@@ -1,7 +1,9 @@
 // Thin wrapper around the Users API (server/routes/users.js).
 // No auth yet -- /me always resolves to the seeded current user (T1).
 
-const BASE_URL = "/api/users";
+const BASE_URL = import.meta.env.PROD
+  ? "https://ramblr-r5x1.onrender.com/users"
+  : "/api/users";
 
 const parseJsonSafe = async (res) => {
   try {
